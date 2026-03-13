@@ -1,0 +1,92 @@
+// prisma/schema.prisma
+// Define your database models
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  phone      String   @unique
+  password   String
+  district   String   @default("Lohit")
+  profileImg String?
+  role       Role     @default(USER)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  books     Book[]    @relation("SellerBooks")
+  inquiries Inquiry[] @relation("BuyerInquiries")
+}
+
+model Book {
+  id              Int        @id @default(autoincrement())
+  name            String
+  author          String
+  price           Float
+  description     String?
+  condition       Condition
+  category        Category
+  images          String[]
+  status          BookStatus @default(UNSOLD)
+  adminCheck      AdminCheck @default(PENDING)
+  rejectionReason String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  sellerId  Int
+  Seller    User      @relation("SellerBooks", fields: [sellerId], references: [id])
+  inquiries Inquiry[]
+}
+
+model Inquiry {
+  id         Int      @id @default(autoincrement())
+  isNotified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  bookId Int
+  book   Book @relation(fields: [bookId], references: [id])
+
+  buyerId Int
+  buyer   User @relation("BuyerInquiries", fields: [buyerId], references: [id])
+
+  @@unique([bookId, buyerId])
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Condition {
+  LIKE_NEW
+  GOOD
+  POOR
+}
+
+enum Category {
+  TEXTBOOK
+  NOVEL
+  COMPETITIVE
+  LITERATURE
+  OTHER
+}
+
+enum BookStatus {
+  UNSOLD
+  SOLD
+}
+
+enum AdminCheck {
+  PENDING
+  APPROVED
+  REJECTED
+}
