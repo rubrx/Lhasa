@@ -52,7 +52,6 @@ export const registerUser = async (data: {
         }
     });
     // step 5: generate the token
-
     const token = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.JWT_SECRET as string,
