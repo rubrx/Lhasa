@@ -61,6 +61,7 @@ export const registerUser = async (data: {
     return { user, token };
 }
 
+
 export const loginUser = async (data: {
     email?: string;
     phone?: string;
@@ -102,6 +103,7 @@ export const loginUser = async (data: {
         throw new Error('INVALID_CREDENTIALS');
     }
 
+    // step 4: check for variables
     if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET_NOT_DEFINED");
     }
