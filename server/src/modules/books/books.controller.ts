@@ -97,7 +97,7 @@ export const deleteBook = async (req: Request, res: Response) => {
         const bookId = Number(req.params.id);
         const sellerId = req.user!.userId;
 
-        await BookService.deleteBook(bookId, sellerId);
+        await BookService.deleteBook(sellerId, bookId);
 
         return res.status(200).json({
             success: true,
