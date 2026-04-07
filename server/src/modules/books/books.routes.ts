@@ -27,4 +27,7 @@ router.patch(
     BookController.reviewBook
 );
 
+// GET /api/books/pending  → getPendingBooks (admin only)
+router.get('/pending', authenticate, authorizeAdmin, BookController.getPendingBooks);
+
 export default router;

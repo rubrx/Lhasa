@@ -29,3 +29,11 @@ export const updateMe = async (req: Request, res: Response) => {
     }
 };
 
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await UserService.getAllUsers();
+        return res.status(200).json({ success: true, users });
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};

@@ -137,3 +137,15 @@ export const reviewBook = async (
     },
   });
 };
+
+export const getPendingBooks = async () => {
+    return prisma.book.findMany({
+        where: { adminCheck: 'PENDING' },
+        include: {
+            Seller: {
+                select: { id: true, name: true, email: true, phone: true },
+            },
+        },
+        orderBy: { createdAt: 'desc' },
+    });
+};

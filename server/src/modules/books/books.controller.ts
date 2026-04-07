@@ -164,3 +164,12 @@ export const reviewBook = async (req: Request, res: Response) => {
         });
     }
 };
+
+export const getPendingBooks = async (req: Request, res: Response) => {
+    try {
+        const books = await BookService.getPendingBooks();
+        return res.status(200).json({ success: true, books });
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
