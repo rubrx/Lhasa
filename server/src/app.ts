@@ -1,5 +1,6 @@
 import express from 'express';
 import authRouter from './modules/auth/auth.routes';
+import bookRouter from './modules/books/books.routes';
 
 const app = express();
 
@@ -10,6 +11,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes will be registered here
 app.use('/api/auth', authRouter);
-
+app.use('/api/books', bookRouter);
 
 export default app;
