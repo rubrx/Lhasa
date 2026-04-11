@@ -1,23 +1,14 @@
+import { Suspense } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, MapPin, Repeat2, Shield, Zap, MessageCircle } from "lucide-react";
-import { getApprovedBooks } from "@/lib/api";
-import { Book } from "@/lib/types";
-import BookCard from "@/components/books/BookCard";
+import { ArrowRight, BookOpen, MapPin, Shield, Zap, MessageCircle } from "lucide-react";
 import SearchHero from "@/components/home/SearchHero";
+import RecentBooks from "@/components/home/RecentBooks";
+import BookCardSkeleton from "@/components/books/BookCardSkeleton";
 
 const categories = [
-  { label: "Fiction",      color: "bg-violet-50  text-violet-700 border-violet-200  hover:bg-violet-100" },
-  { label: "Non-fiction",  color: "bg-sky-50     text-sky-700    border-sky-200     hover:bg-sky-100" },
-  { label: "Science",      color: "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100" },
-  { label: "Mathematics",  color: "bg-blue-50    text-blue-700   border-blue-200    hover:bg-blue-100" },
-  { label: "History",      color: "bg-amber-50   text-amber-700  border-amber-200   hover:bg-amber-100" },
-  { label: "Literature",   color: "bg-rose-50    text-rose-700   border-rose-200    hover:bg-rose-100" },
-  { label: "Self-Help",    color: "bg-teal-50    text-teal-700   border-teal-200    hover:bg-teal-100" },
-  { label: "Biography",    color: "bg-orange-50  text-orange-700 border-orange-200  hover:bg-orange-100" },
-  { label: "Comics",       color: "bg-pink-50    text-pink-700   border-pink-200    hover:bg-pink-100" },
-  { label: "Children",     color: "bg-yellow-50  text-yellow-700 border-yellow-200  hover:bg-yellow-100" },
-  { label: "Religion",     color: "bg-stone-50   text-stone-700  border-stone-200   hover:bg-stone-100" },
-  { label: "Reference",    color: "bg-indigo-50  text-indigo-700 border-indigo-200  hover:bg-indigo-100" },
+  "Fiction", "Non-fiction", "Science", "Mathematics", "History",
+  "Literature", "Self-Help", "Biography", "Comics", "Children",
+  "Religion", "Reference",
 ];
 
 const steps = [
@@ -47,21 +38,22 @@ const steps = [
   },
 ];
 
-export default async function HomePage() {
-  let books: Book[] = [];
-  try {
-    const result = await getApprovedBooks();
-    books = result.books.slice(0, 8);
-  } catch {
-    books = [];
-  }
+function SkeletonGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <BookCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
 
+export default function HomePage() {
   return (
     <div className="overflow-x-hidden">
 
       {/* ──────────────────── HERO ──────────────────── */}
       <section className="relative overflow-hidden bg-white px-6 pb-20 pt-16 md:pt-24 md:pb-28">
-        {/* Subtle green radial behind title */}
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2"
@@ -91,8 +83,8 @@ export default async function HomePage() {
             Books. Local. Affordable.
           </p>
           <p
-            className="animate-fade-up mx-auto mt-3 max-w-md text-[16px] leading-relaxed text-ink-muted"
-            style={{ animationDelay: "0.15s" }}
+            className="animate-fade-up mx-auto mt-3 max-w-[480px] text-[16px] text-ink-muted"
+            style={{ lineHeight: 1.7, animationDelay: "0.15s" }}
           >
             Buy and sell used books directly with people around you — no commissions, no middlemen, no fees. Ever.
           </p>
@@ -121,7 +113,6 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {/* Trust line */}
           <p className="animate-fade-up mt-6 text-[13px] text-ink-subtle" style={{ animationDelay: "0.3s" }}>
             100% free to list · No account fees · Direct WhatsApp contact
           </p>
@@ -185,11 +176,11 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="flex flex-wrap gap-2.5">
-            {categories.map(({ label, color }) => (
+            {categories.map((label) => (
               <Link
                 key={label}
                 href={`/books?q=${encodeURIComponent(label)}`}
-                className={`rounded-full border px-4 py-2 text-[13px] font-semibold transition-all duration-200 ${color}`}
+                className="rounded-full border border-accent/20 bg-accent/10 px-4 py-2 text-[13px] font-semibold text-accent transition-all duration-200 hover:border-accent/35 hover:bg-accent/15"
               >
                 {label}
               </Link>
@@ -218,28 +209,9 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {books.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-3xl border border-border bg-white px-6 py-20 text-center shadow-sm">
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-light">
-                <Repeat2 size={28} className="text-accent" strokeWidth={1.75} />
-              </div>
-              <p className="text-[17px] font-bold text-ink">No books listed yet</p>
-              <p className="mt-2 text-[14px] text-ink-muted">Be the first to list a book in Lohit.</p>
-              <Link
-                href="/sell"
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md"
-              >
-                <BookOpen size={15} />
-                List a book
-              </Link>
-            </div>
-          )}
+          <Suspense fallback={<SkeletonGrid />}>
+            <RecentBooks />
+          </Suspense>
         </div>
       </section>
 

@@ -81,3 +81,14 @@ input[type="number"] { -moz-appearance: textfield; }
 
 /* ── Selection ── */
 ::selection { background: #e8f2ec; color: #0a0a0a; }
+
+/* ── Shimmer skeleton ── */
+@keyframes shimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position: 800px 0; }
+}
+@utility animate-shimmer {
+  background: linear-gradient(90deg, #f0f0ed 25%, #e4e4e0 50%, #f0f0ed 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
