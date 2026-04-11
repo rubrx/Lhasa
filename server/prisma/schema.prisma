@@ -15,8 +15,9 @@ model User {
   id         Int      @id @default(autoincrement())
   name       String
   email      String   @unique
-  phone      String   @unique
-  password   String
+  phone      String?  @unique   // nullable for OAuth users; required before listing/contacting
+  password   String?            // nullable for OAuth-only users
+  googleId   String?  @unique   // Google OAuth subject ID
   district   String   @default("Lohit")
   profileImg String?
   role       Role     @default(USER)
