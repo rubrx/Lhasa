@@ -18,6 +18,7 @@ interface AuthContextType {
   isAdmin: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -55,6 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -65,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: user?.role === "ADMIN",
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

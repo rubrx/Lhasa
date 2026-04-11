@@ -55,11 +55,66 @@ export async function loginUser(payload: {
   );
 }
 
+export async function forgotPassword(email: string) {
+  return request<{ success: boolean; message: string }>("/api/auth/forgot-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function resetPassword(token: string, password: string) {
+  return request<{ success: boolean; message: string }>("/api/auth/reset-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+  });
+}
+
+export async function googleAuth(credential: string) {
+  return request<{ success: boolean; user: User; token: string; needsPhone: boolean }>(
+    "/api/auth/google",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential }),
+    }
+  );
+}
+
 // ─── Users ─────────────────────────────────────────────────────────────────
 
 export async function getMe() {
   return request<{ success: boolean; user: User }>("/api/users/me", {
     headers: authHeaders(),
+  });
+}
+
+export async function updateProfile(data: {
+  name?: string;
+  phone?: string;
+  district?: string;
+  profileImg?: File;
+}) {
+  // Send as multipart only when there's a file; otherwise JSON is simpler and safer
+  if (data.profileImg) {
+    const formData = new FormData();
+    if (data.name)     formData.append("name",       data.name);
+    if (data.phone)    formData.append("phone",      data.phone);
+    if (data.district) formData.append("district",   data.district);
+    formData.append("profileImg", data.profileImg);
+
+    return request<{ success: boolean; user: User }>("/api/users/me", {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: formData,
+    });
+  }
+
+  return request<{ success: boolean; user: User }>("/api/users/me", {
+    method: "PATCH",
+    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({ name: data.name, phone: data.phone, district: data.district }),
   });
 }
 
