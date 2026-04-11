@@ -25,6 +25,17 @@ export const metadata: Metadata = {
   description:
     "Buy and sell used books in Lohit district, Arunachal Pradesh. No fees, no commissions — just books finding new readers.",
   keywords: ["used books", "second hand books", "Lohit", "Arunachal Pradesh"],
+  icons: {
+    icon: [
+      { url: "/favicons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/favicons/apple-touch-icon.png",
+    other: [
+      { rel: "android-chrome-192x192", url: "/favicons/android-chrome-192x192.png" },
+      { rel: "android-chrome-512x512", url: "/favicons/android-chrome-512x512.png" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

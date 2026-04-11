@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import { Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
 
 const exploreLinks = [
   { href: "/books",   label: "Browse Books" },
@@ -22,8 +23,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 md:col-span-1">
             <Link href="/" className="group inline-flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent transition-transform duration-200 group-hover:scale-95">
-                <BookOpen size={16} className="text-white" strokeWidth={2.2} />
+              <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-accent-light p-1.5 transition-transform duration-200 group-hover:scale-95">
+                <Image src="/logo.svg" alt="Lhasa" width={28} height={28} />
               </div>
               <span className="font-serif text-[20px] font-bold text-ink">Lhasa</span>
             </Link>
