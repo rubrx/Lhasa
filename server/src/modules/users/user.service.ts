@@ -1,4 +1,22 @@
 import prisma from '../../services/lib/prisma';
+import cloudinary from '../../services/lib/cloudinary';
+import { Readable } from 'stream';
+
+const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error || !result) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    const readable = new Readable();
+    readable.push(buffer);
+    readable.push(null);
+    readable.pipe(uploadStream);
+  });
+};
 
 export const getMe = async (userId: number) => {
     const user = await prisma.user.findUnique({
@@ -25,11 +43,20 @@ export const updateMe = async (
         name?: string;
         phone?: string;
         district?: string;
-    }
+    },
+    file?: Express.Multer.File
 ) => {
+    let profileImg: string | undefined;
+    if (file) {
+        profileImg = await uploadToCloudinary(file.buffer, 'lhasa/profiles');
+    }
+
     return prisma.user.update({
         where: { id: userId },
-        data,
+        data: {
+            ...data,
+            ...(profileImg && { profileImg }),
+        },
         select: {
             id: true,
             name: true,
@@ -38,7 +65,7 @@ export const updateMe = async (
             district: true,
             profileImg: true,
             role: true,
-            updatedAt: true,
+            createdAt: true,
         },
     });
 };
