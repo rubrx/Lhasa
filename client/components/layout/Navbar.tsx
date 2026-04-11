@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LogOut, BookOpen } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { cn } from "@/lib/utils";
+import { cloudinaryOptimize, cn } from "@/lib/utils";
 
 const navLinks = [
-  { href: "/",       label: "Home" },
-  { href: "/books",  label: "Browse" },
-  { href: "/sell",   label: "Sell" },
+  { href: "/",        label: "Home" },
+  { href: "/books",   label: "Browse" },
+  { href: "/sell",    label: "Sell" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -23,16 +24,12 @@ export default function Navbar() {
 
         {/* ── Logo ── */}
         <Link href="/" className="group flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent transition-all duration-200 group-hover:scale-95 group-hover:bg-accent-hover">
-            <BookOpen size={17} className="text-white" strokeWidth={2.2} />
+          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-accent-light p-1.5 transition-all duration-200 group-hover:scale-95 group-hover:bg-accent/15">
+            <Image src="/logo.svg" alt="Lhasa" width={28} height={28} />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="font-serif text-[20px] font-bold tracking-tight text-ink">
-              Lhasa
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-subtle">
-              Books · Local
-            </span>
+            <span className="font-serif text-[20px] font-bold tracking-tight text-ink">Lhasa</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-subtle">Books · Local</span>
           </div>
         </Link>
 
@@ -46,9 +43,7 @@ export default function Navbar() {
                 href={href}
                 className={cn(
                   "rounded-lg px-4 py-2.5 text-[15px] font-medium transition-all duration-150",
-                  isActive
-                    ? "text-ink"
-                    : "text-ink-muted hover:text-ink hover:bg-surface-muted"
+                  isActive ? "text-ink" : "text-ink-muted hover:text-ink hover:bg-surface-muted"
                 )}
               >
                 {label}
@@ -61,9 +56,7 @@ export default function Navbar() {
                 href="/dashboard"
                 className={cn(
                   "rounded-lg px-4 py-2.5 text-[15px] font-medium transition-all duration-150",
-                  pathname === "/dashboard"
-                    ? "text-ink"
-                    : "text-ink-muted hover:text-ink hover:bg-surface-muted"
+                  pathname === "/dashboard" ? "text-ink" : "text-ink-muted hover:text-ink hover:bg-surface-muted"
                 )}
               >
                 My Books
@@ -73,9 +66,7 @@ export default function Navbar() {
                   href="/admin"
                   className={cn(
                     "rounded-lg px-4 py-2.5 text-[15px] font-medium transition-all duration-150",
-                    pathname === "/admin"
-                      ? "text-ink"
-                      : "text-ink-muted hover:text-ink hover:bg-surface-muted"
+                    pathname === "/admin" ? "text-ink" : "text-ink-muted hover:text-ink hover:bg-surface-muted"
                   )}
                 >
                   Admin
@@ -89,9 +80,25 @@ export default function Navbar() {
         <div className="flex items-center gap-2.5">
           {isAuthenticated ? (
             <>
-              <span className="text-[15px] font-medium text-ink-muted">
-                {user?.name.split(" ")[0]}
-              </span>
+              <Link
+                href="/profile"
+                title={user?.name}
+                className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-accent ring-2 ring-accent/0 transition-all duration-200 hover:ring-accent/30"
+              >
+                {user?.profileImg ? (
+                  <Image
+                    src={cloudinaryOptimize(user.profileImg, 72)}
+                    alt={user.name}
+                    width={36}
+                    height={36}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[14px] font-bold text-white">
+                    {user?.name[0]?.toUpperCase()}
+                  </span>
+                )}
+              </Link>
               <button
                 onClick={logout}
                 className="flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-[14px] font-medium text-ink-muted transition-all duration-150 hover:border-border-strong hover:text-ink"
