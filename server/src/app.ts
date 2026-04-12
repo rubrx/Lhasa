@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import prisma from './services/lib/prisma';
 import authRouter from './modules/auth/auth.routes';
 import bookRouter from './modules/books/books.routes';
 import inquiryRouter from './modules/inquiries/inquiries.routes';
@@ -21,5 +22,14 @@ app.use('/api/auth', authRouter);
 app.use('/api/books', bookRouter);
 app.use('/api/inquiries', inquiryRouter);
 app.use('/api/users', userRouter);
+
+app.get('/health', async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', db: 'connected' });
+  } catch {
+    res.status(500).json({ status: 'error', db: 'disconnected' });
+  }
+});
 
 export default app;
