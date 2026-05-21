@@ -15,7 +15,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getBookById, createInquiry } from "@/lib/api";
-import { Book, BookCondition } from "@/lib/types";
+import { Book, BookCondition } from "@lhasa/shared";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import {
