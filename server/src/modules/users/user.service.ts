@@ -51,23 +51,28 @@ export const updateMe = async (
         profileImg = await uploadToCloudinary(file.buffer, 'lhasa/profiles');
     }
 
-    return prisma.user.update({
-        where: { id: userId },
-        data: {
-            ...data,
-            ...(profileImg && { profileImg }),
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            district: true,
-            profileImg: true,
-            role: true,
-            createdAt: true,
-        },
-    });
+    try {
+        return await prisma.user.update({
+            where: { id: userId },
+            data: {
+                ...data,
+                ...(profileImg && { profileImg }),
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                district: true,
+                profileImg: true,
+                role: true,
+                createdAt: true,
+            },
+        });
+    } catch (err: any) {
+        if (err.code === 'P2002') throw new Error('PHONE_EXISTS');
+        throw err;
+    }
 };
 
 export const getAllUsers = async () => {

@@ -14,7 +14,7 @@ export const createInquiry = async (req: Request, res: Response) => {
         if (error.message === 'BOOK_NOT_FOUND') {
             return res.status(404).json({ success: false, message: 'Book not found' });
         }
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: 'Failed to send inquiry' });
     }
 };
 
@@ -33,6 +33,6 @@ export const getBookInquiries = async (req: Request, res: Response) => {
         if (error.message === 'UNAUTHORIZED') {
             return res.status(403).json({ success: false, message: 'Access denied' });
         }
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({ success: false, message: 'Failed to load inquiries' });
     }
 };
