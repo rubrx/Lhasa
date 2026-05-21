@@ -31,7 +31,7 @@ const steps = [
   {
     step: "03",
     title: "Connect & sell",
-    desc: "Buyers contact you directly via WhatsApp. You meet locally. Zero platform fees — ever.",
+    desc: "Buyers contact you directly via WhatsApp. You meet locally. Zero platform fees ever.",
     icon: MessageCircle,
     accent: "bg-violet-50 text-violet-600",
     num: "text-violet-100",
@@ -86,7 +86,7 @@ export default function HomePage() {
             className="animate-fade-up mx-auto mt-3 max-w-[480px] text-[16px] text-ink-muted"
             style={{ lineHeight: 1.7, animationDelay: "0.15s" }}
           >
-            Buy and sell used books directly with people around you — no commissions, no middlemen, no fees. Ever.
+            Buy and sell used books directly with people around you, no commissions, no middlemen, no fees. Ever.
           </p>
 
           <div className="animate-fade-up" style={{ animationDelay: "0.2s" }}>
@@ -232,7 +232,7 @@ export default function HomePage() {
               href="/sell"
               className="group flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-[15px] font-bold text-ink transition-all duration-200 hover:bg-white/90"
             >
-              Start listing — it&apos;s free
+              Start listing it&apos;s free
               <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
             <Link
@@ -253,7 +253,7 @@ export default function HomePage() {
               Why Lhasa?
             </h2>
             <p className="mx-auto mt-2 max-w-sm text-[15px] text-ink-muted">
-              Built for Lohit district. No VC funding, no growth hacks — just a clean, honest marketplace.
+              Built for Lohit district. No VC funding, no growth hacks, just a clean, honest marketplace.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">

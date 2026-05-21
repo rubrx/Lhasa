@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Browse Used Books | Lhasa",
     description:
-      "Hundreds of used books available in Lohit district. Textbooks, novels, competitive exams — all at affordable prices with zero platform fees.",
+      "Hundreds of used books available in Lohit district. Textbooks, novels, competitive exams - all at affordable prices with zero platform fees.",
     url: "/books",
   },
 };

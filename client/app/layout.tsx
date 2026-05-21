@@ -26,10 +26,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     template: "%s | Lhasa",
-    default: "Lhasa — Buy & Sell Used Books in Lohit, Arunachal Pradesh",
+    default: "Lhasa: Buy & Sell Used Books in Lohit, Arunachal Pradesh",
   },
   description:
-    "Lhasa is a free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh. No fees, no commissions — connect directly with buyers and sellers near you.",
+    "Lhasa is a free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh. No fees, no commissions, connect directly with buyers and sellers near you.",
   keywords: [
     "Lhasa",
     "lhasa",
@@ -69,9 +69,9 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "Lhasa",
-    title: "Lhasa — Buy & Sell Used Books in Lohit, Arunachal Pradesh",
+    title: "Lhasa - Buy & Sell Used Books in Lohit, Arunachal Pradesh",
     description:
-      "Free local marketplace for used books in Lohit district. No fees, no commissions — connect with buyers and sellers near you.",
+      "Free local marketplace for used books in Lohit district. No fees, no commissions, connect with buyers and sellers near you.",
     images: [
       {
         url: "/favicons/android-chrome-512x512.png",

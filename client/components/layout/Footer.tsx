@@ -29,7 +29,7 @@ export default function Footer() {
               <span className="font-serif text-[20px] font-bold text-ink">Lhasa</span>
             </Link>
             <p className="mt-4 max-w-[210px] text-[13px] leading-relaxed text-ink-muted">
-              A second-hand book marketplace for Lohit district. No payments, no commissions — just books finding new readers.
+              A second-hand book marketplace for Lohit district. No payments, no commissions, just books finding new readers.
             </p>
             <div className="mt-5 flex items-center gap-1.5">
               <MapPin size={12} className="shrink-0 text-accent" />

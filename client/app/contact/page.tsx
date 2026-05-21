@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin, MessageCircle, Bug, Sparkles } from "lucide-react"
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact — Lhasa",
+  title: "Contact Lhasa",
   description: "Get in touch with Lhasa. Report bugs, share feedback, or just say hello.",
 };
 
@@ -117,7 +117,7 @@ export default function ContactPage() {
               Quickest way to reach us?
             </p>
             <p className="mt-2 text-sm leading-relaxed text-surface/60">
-              Drop us an email — it&apos;s the fastest way to get a response and track your message.
+              Drop us an email, it&apos;s the fastest way to get a response and track your message.
             </p>
             <a
               href="mailto:rubrangsokri07@gmail.com?subject=Lhasa Feedback"
@@ -132,7 +132,7 @@ export default function ContactPage() {
 
       {/* Bottom note */}
       <p className="mt-12 text-center text-sm leading-relaxed text-ink-muted">
-        Lhasa is a community project built for Lohit district. Your feedback directly shapes the product — we read every message.
+        Lhasa is a community project built for Lohit district. Your feedback directly shapes the product, we read every message.
       </p>
     </div>
   );

@@ -22,9 +22,9 @@ export default function CompleteProfilePage() {
     if (!isLoading && isAuthenticated && user?.phone) router.push("/");
   }, [isLoading, isAuthenticated, user, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!phone || phone.length < 10) { toast.error("Enter a valid 10-digit phone number"); return; }
+    if (!/^\d{10}$/.test(phone.trim())) { toast.error("Enter a valid 10-digit phone number"); return; }
 
     setSaving(true);
     try {

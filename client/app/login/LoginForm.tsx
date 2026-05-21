@@ -21,29 +21,38 @@ function GoogleIcon() {
   );
 }
 
+function isEmail(value: string) {
+  return value.includes("@");
+}
+
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !password) { toast.error("Please fill in all fields"); return; }
+    if (!identifier || !password) { toast.error("Please fill in all fields"); return; }
+
+    const credentials = isEmail(identifier)
+      ? { email: identifier.trim(), password }
+      : { phone: identifier.trim(), password };
+
     setLoading(true);
     try {
-      const result = await loginUser({ email, password });
+      const result = await loginUser(credentials);
       login(result.token, result.user);
       toast.success(`Welcome back, ${result.user.name.split(" ")[0]}!`);
       router.push(redirect);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Invalid email or password");
+      toast.error(err instanceof Error ? err.message : "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -102,13 +111,13 @@ export default function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-ink">Email</label>
+            <label className="mb-1.5 block text-sm font-medium text-ink">Email or phone number</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@email.com"
-              autoComplete="email"
+              type="text"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="you@email.com or 10-digit number"
+              autoComplete="username"
               className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
           </div>
