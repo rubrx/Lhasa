@@ -1,4 +1,4 @@
-import { Book, Inquiry, User } from "./types";
+import { Book, Inquiry, User } from "@lhasa/shared";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
@@ -43,6 +43,7 @@ export async function registerUser(payload: {
 
 export async function loginUser(payload: {
   email?: string;
+  phone?: string;
   password: string;
 }) {
   return request<{ success: boolean; user: User; token: string }>(

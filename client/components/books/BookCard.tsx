@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Book, BookCondition } from "@/lib/types";
+import { Book, BookCondition } from "@lhasa/shared";
 import { cn, timeAgo, formatPrice, cloudinaryOptimize } from "@/lib/utils";
 import { Eye } from "lucide-react";
 

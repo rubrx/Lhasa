@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BookOpen, Repeat2 } from "lucide-react";
 import { getApprovedBooks } from "@/lib/api";
-import { Book } from "@/lib/types";
+import { Book } from "@lhasa/shared";
 import BookCard from "@/components/books/BookCard";
 
 export default async function RecentBooks() {

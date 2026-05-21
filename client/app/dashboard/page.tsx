@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { getMyBooks, deleteBook } from "@/lib/api";
-import { Book, AdminCheck } from "@/lib/types";
+import { Book, AdminCheck } from "@lhasa/shared";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { cn, formatPrice, timeAgo, cloudinaryOptimize } from "@/lib/utils";

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { getApprovedBooks } from "@/lib/api";
-import { Book, BookCategory, BookCondition } from "@/lib/types";
+import { Book, BookCategory, BookCondition } from "@lhasa/shared";
 import BookCard from "@/components/books/BookCard";
 
 const CATEGORIES: { value: BookCategory | ""; label: string }[] = [

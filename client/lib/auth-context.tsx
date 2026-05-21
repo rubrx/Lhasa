@@ -7,7 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { User } from "./types";
+import { User } from "@lhasa/shared";
 import { getMe } from "./api";
 
 interface AuthContextType {
