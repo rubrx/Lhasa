@@ -1,0 +1,9 @@
+{
+  "name": "lhasa",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test"
+  }
+}
