@@ -102,7 +102,8 @@ export const forgotPassword = async (email: string) => {
         { expiresIn: '15m' }
     );
 
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const frontendOrigin = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim();
+    const resetUrl = `${frontendOrigin}/reset-password?token=${resetToken}`;
 
     await transporter.sendMail({
         from: `"Lhasa Books" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
