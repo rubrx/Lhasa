@@ -2,33 +2,30 @@ import { Router } from 'express';
 import * as BookController from './books.controller';
 import { authenticate, authorizeAdmin } from '../../middlewares/auth.middleware';
 import { upload } from '../../services/lib/multer';
+import { validate } from '../../middleware/validate';
+import { writeLimiter } from '../../middleware/rate-limit';
+import { bookIdSchema, createBookSchema, reviewBookSchema } from './books.schemas';
 
 const router = Router();
 
-// GET    /                    → getApprovedBooks  (public)
-router.get('/', BookController.getApprovedBooks);
+// Public
+router.get('/',         BookController.getApprovedBooks);
+router.get('/:id',      validate(bookIdSchema, 'params'), BookController.getBookById);
 
-// GET    /my                  → getMyBooks        (authenticate)
-router.get('/my', authenticate, BookController.getMyBooks);
+// Authenticated
+router.get('/my',       authenticate, BookController.getMyBooks);
+router.post('/',        authenticate, writeLimiter, upload.array('images'), validate(createBookSchema), BookController.createBook);
+router.delete('/:id',   authenticate, validate(bookIdSchema, 'params'), BookController.deleteBook);
 
-// GET    /pending             → getPendingBooks   (admin only) — must be before /:id
-router.get('/pending', authenticate, authorizeAdmin, BookController.getPendingBooks);
-
-// GET    /:id                 → getBookById       (public)
-router.get('/:id', BookController.getBookById);
-
-// POST   /                    → createBook        (authenticate + multer)
-router.post('/', authenticate, upload.array('images'), BookController.createBook);
-
-// DELETE /:id                 → deleteBook        (authenticate)
-router.delete('/:id', authenticate, BookController.deleteBook);
-
-// PATCH  /:id/review          → reviewBook        (authenticate + authorizeAdmin)
+// Admin only — must be defined before /:id to avoid route conflict
+router.get('/pending',  authenticate, authorizeAdmin, BookController.getPendingBooks);
 router.patch(
   '/:id/review',
   authenticate,
   authorizeAdmin,
-  BookController.reviewBook
+  validate(bookIdSchema, 'params'),
+  validate(reviewBookSchema),
+  BookController.reviewBook,
 );
 
 export default router;

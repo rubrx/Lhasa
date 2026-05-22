@@ -1,27 +1,7 @@
 import prisma from '../../services/lib/prisma';
-import cloudinary from '../../services/lib/cloudinary';
 import { Condition, Category } from '../../../generated/prisma';
-import { Readable } from 'stream';
-
-type MulterFile = Express.Multer.File;
-
-// Helper: upload a single buffer to Cloudinary
-const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error || !result) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
-
-    const readable = new Readable();
-    readable.push(buffer);
-    readable.push(null);
-    readable.pipe(uploadStream);
-  });
-};
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../shared/errors';
+import { uploadBuffers } from '../../shared/upload';
 
 export const createBook = async (
   sellerId: number,
@@ -33,20 +13,15 @@ export const createBook = async (
     condition: Condition;
     category: Category;
   },
-  files: Express.Multer.File[]
+  files: Express.Multer.File[],
 ) => {
-  // Step 1: Validate minimum images
   if (files.length < 3) {
-    throw new Error('MINIMUM_IMAGES');
+    throw new BadRequestError('At least 3 images are required');
   }
 
-  // Step 2: Upload all images to Cloudinary
-  const imageUrls = await Promise.all(
-files.map((file: MulterFile) => uploadToCloudinary(file.buffer, 'lhasa/books'))
-  );
+  const imageUrls = await uploadBuffers(files, 'lhasa/books');
 
-  // Step 3: Save book to database
-  const book = await prisma.book.create({
+  return prisma.book.create({
     data: {
       ...data,
       price: Number(data.price),
@@ -54,8 +29,6 @@ files.map((file: MulterFile) => uploadToCloudinary(file.buffer, 'lhasa/books'))
       sellerId,
     },
   });
-
-  return book;
 };
 
 export const getApprovedBooks = async () => {
@@ -98,7 +71,7 @@ export const getBookById = async (id: number) => {
     },
   });
 
-  if (!book) throw new Error('BOOK_NOT_FOUND');
+  if (!book) throw new NotFoundError('Book');
   return book;
 };
 
@@ -110,12 +83,10 @@ export const getMyBooks = async (sellerId: number) => {
 };
 
 export const deleteBook = async (sellerId: number, bookId: number) => {
-  const book = await prisma.book.findUnique({
-    where: { id: bookId },
-  });
+  const book = await prisma.book.findUnique({ where: { id: bookId } });
 
-  if (!book) throw new Error('BOOK_NOT_FOUND');
-  if (book.sellerId !== sellerId) throw new Error('UNAUTHORIZED');
+  if (!book) throw new NotFoundError('Book');
+  if (book.sellerId !== sellerId) throw new ForbiddenError('You are not allowed to delete this book');
 
   await prisma.book.delete({ where: { id: bookId } });
 };
@@ -123,10 +94,10 @@ export const deleteBook = async (sellerId: number, bookId: number) => {
 export const reviewBook = async (
   bookId: number,
   decision: 'APPROVED' | 'REJECTED',
-  rejectionReason?: string
+  rejectionReason?: string,
 ) => {
   if (decision === 'REJECTED' && !rejectionReason) {
-    throw new Error('REJECTION_REASON_REQUIRED');
+    throw new BadRequestError('Rejection reason is required');
   }
 
   return prisma.book.update({
@@ -139,13 +110,13 @@ export const reviewBook = async (
 };
 
 export const getPendingBooks = async () => {
-    return prisma.book.findMany({
-        where: { adminCheck: 'PENDING' },
-        include: {
-            Seller: {
-                select: { id: true, name: true, email: true, phone: true },
-            },
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+  return prisma.book.findMany({
+    where: { adminCheck: 'PENDING' },
+    include: {
+      Seller: {
+        select: { id: true, name: true, email: true, phone: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
 };
