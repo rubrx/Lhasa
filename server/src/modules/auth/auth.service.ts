@@ -1,18 +1,22 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { type SignOptions } from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import prisma from '../../services/lib/prisma';
+import { env } from '../../config/env';
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../../shared/errors';
+
+const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN as SignOptions['expiresIn'];
 
 const SALT_ROUNDS = 10;
 
-// ─── Email transporter (configure via env vars) ───────────────────────────
+// ─── Email transporter ────────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-    host:   process.env.SMTP_HOST || 'smtp.gmail.com',
-    port:   Number(process.env.SMTP_PORT) || 587,
+    host:   env.SMTP_HOST,
+    port:   env.SMTP_PORT,
     secure: false,
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: env.SMTP_USER,
+        pass: env.SMTP_PASS,
     },
 });
 
@@ -25,10 +29,10 @@ export const registerUser = async (data: {
     district?: string;
 }) => {
     const existingEmail = await prisma.user.findUnique({ where: { email: data.email } });
-    if (existingEmail) throw new Error('EMAIL_EXISTS');
+    if (existingEmail) throw new ConflictError('Email already registered');
 
     const existingPhone = await prisma.user.findUnique({ where: { phone: data.phone } });
-    if (existingPhone) throw new Error('PHONE_EXISTS');
+    if (existingPhone) throw new ConflictError('Phone number already registered');
 
     const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
 
@@ -48,8 +52,8 @@ export const registerUser = async (data: {
 
     const token = jwt.sign(
         { userId: user.id, role: user.role },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '7d' }
+        env.JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
     );
 
     return { user, token };
@@ -57,7 +61,7 @@ export const registerUser = async (data: {
 
 // ─── Login ───────────────────────────────────────────────────────────────
 export const loginUser = async (data: { email?: string; phone?: string; password: string }) => {
-    if (!data.email && !data.phone) throw new Error('EMAIL_OR_PHONE_REQUIRED');
+    if (!data.email && !data.phone) throw new ValidationError('Email or phone is required');
 
     const user = await prisma.user.findFirst({
         where: {
@@ -72,18 +76,16 @@ export const loginUser = async (data: { email?: string; phone?: string; password
         },
     });
 
-    if (!user) throw new Error('INVALID_CREDENTIALS');
-    if (!user.password) throw new Error('USE_GOOGLE_LOGIN'); // OAuth-only account
+    if (!user) throw new UnauthorizedError('Invalid email or password');
+    if (!user.password) throw new BadRequestError('This account uses Google sign-in. Please use the Google button.');
 
     const isMatch = await bcrypt.compare(data.password, user.password);
-    if (!isMatch) throw new Error('INVALID_CREDENTIALS');
-
-    if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET_NOT_DEFINED');
+    if (!isMatch) throw new UnauthorizedError('Invalid email or password');
 
     const token = jwt.sign(
         { userId: user.id, role: user.role },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '7d' }
+        env.JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
     );
 
     const { password: _, ...safeUser } = user;
@@ -98,15 +100,15 @@ export const forgotPassword = async (email: string) => {
 
     const resetToken = jwt.sign(
         { userId: user.id, purpose: 'reset' },
-        process.env.JWT_SECRET as string,
+        env.JWT_SECRET,
         { expiresIn: '15m' }
     );
 
-    const frontendOrigin = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim();
+    const frontendOrigin = env.FRONTEND_URL.split(',')[0].trim();
     const resetUrl = `${frontendOrigin}/reset-password?token=${resetToken}`;
 
     await transporter.sendMail({
-        from: `"Lhasa Books" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+        from: `"Lhasa Books" <${env.SMTP_FROM ?? env.SMTP_USER}>`,
         to: email,
         subject: 'Reset your Lhasa password',
         html: `
@@ -125,12 +127,12 @@ export const forgotPassword = async (email: string) => {
 
 // ─── Reset password ───────────────────────────────────────────────────────
 export const resetPassword = async (token: string, newPassword: string) => {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
         userId: number;
         purpose: string;
     };
 
-    if (decoded.purpose !== 'reset') throw new Error('INVALID_TOKEN');
+    if (decoded.purpose !== 'reset') throw new BadRequestError('Invalid reset link');
 
     const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
@@ -148,7 +150,7 @@ export const googleLogin = async (credential: string) => {
         headers: { Authorization: `Bearer ${credential}` },
     });
 
-    if (!res.ok) throw new Error('INVALID_GOOGLE_TOKEN');
+    if (!res.ok) throw new UnauthorizedError('Google sign-in failed');
 
     const { email, name, sub: googleId, picture } = await res.json() as {
         email: string;
@@ -157,7 +159,7 @@ export const googleLogin = async (credential: string) => {
         picture?: string;
     };
 
-    if (!email) throw new Error('INVALID_GOOGLE_TOKEN');
+    if (!email) throw new UnauthorizedError('Google sign-in failed');
 
     // Find by googleId first, then by email (to link existing account)
     let user = await prisma.user.findFirst({
@@ -183,8 +185,8 @@ export const googleLogin = async (credential: string) => {
 
     const token = jwt.sign(
         { userId: user.id, role: user.role },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '7d' }
+        env.JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
     );
 
     const { password: _, ...safeUser } = user;
