@@ -1,19 +1,15 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
   "license": "ISC",
-  "author": "",
-  "main": "server.js",
   "scripts": {
-    "start": "tsx src/server.ts",
+    "dev": "tsx src/server.ts",
     "build": "prisma generate && prisma migrate deploy && tsc",
-    "serve": "node dist/server.js",
+    "start": "node dist/server.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@lhasa/shared": "workspace:*",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "6.19.2",
     "bcrypt": "^6.0.0",
