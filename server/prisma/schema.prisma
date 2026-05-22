@@ -7,8 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")  // Neon: use direct (non-pooled) URL for migrations only
 }
 
 model User {
@@ -46,6 +47,13 @@ model Book {
   sellerId  Int
   Seller    User      @relation("SellerBooks", fields: [sellerId], references: [id])
   inquiries Inquiry[]
+
+  // Covers getApprovedBooks + getPendingBooks (filter by status, sort by date)
+  @@index([adminCheck, createdAt(sort: Desc)])
+  // Covers getMyBooks (seller dashboard)
+  @@index([sellerId, createdAt(sort: Desc)])
+  // Covers getBookById (PK lookup + status check)
+  @@index([id, adminCheck])
 }
 
 model Inquiry {
