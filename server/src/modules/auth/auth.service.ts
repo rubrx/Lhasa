@@ -108,7 +108,7 @@ export const forgotPassword = async (email: string) => {
     const resetUrl = `${frontendOrigin}/reset-password?token=${resetToken}`;
 
     await transporter.sendMail({
-        from: `"Lhasa Books" <${env.SMTP_FROM ?? env.SMTP_USER}>`,
+        from: env.SMTP_FROM ?? `"Lhasa Books" <${env.SMTP_USER}>`,
         to: email,
         subject: 'Reset your Lhasa password',
         html: `
