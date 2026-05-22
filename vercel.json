@@ -1,6 +1,0 @@
-{
-  "framework": "nextjs",
-  "buildCommand": "pnpm --filter client run build",
-  "outputDirectory": "client/.next",
-  "installCommand": "pnpm install --frozen-lockfile"
-}
