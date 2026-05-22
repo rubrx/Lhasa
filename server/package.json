@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx src/server.ts",
     "build": "prisma generate && tsc",
-    "start": "prisma migrate deploy && node dist/server.js",
+    "start": "node scripts/start.cjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },
