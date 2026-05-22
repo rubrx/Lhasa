@@ -20,7 +20,8 @@ app.set('trust proxy', 1);
 app.use(helmet());
 
 // Preflight before anything else, then CORS
-app.options('*', cors(corsOptions));
+// Express 5 requires '/{*path}' instead of '*' for wildcard routes
+app.options('/{*path}', cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(express.json({ limit: '10mb' }));
