@@ -1,17 +1,33 @@
+'use client';
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Repeat2 } from "lucide-react";
 import { getApprovedBooks } from "@/lib/api";
 import { Book } from "@/lib/types";
 import BookCard from "@/components/books/BookCard";
+import BookCardSkeleton from "@/components/books/BookCardSkeleton";
 
-export default async function RecentBooks() {
-  let books: Book[] = [];
-  try {
-    const result = await getApprovedBooks();
-    books = result.books.slice(0, 8);
-  } catch {
-    books = [];
-  }
+function SkeletonGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <BookCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+export default function RecentBooks() {
+  const [books, setBooks] = useState<Book[] | null>(null);
+
+  useEffect(() => {
+    getApprovedBooks()
+      .then((result) => setBooks(result.books.slice(0, 8)))
+      .catch(() => setBooks([]));
+  }, []);
+
+  if (books === null) return <SkeletonGrid />;
 
   if (books.length === 0) {
     return (
@@ -20,7 +36,9 @@ export default async function RecentBooks() {
           <Repeat2 size={28} className="text-accent" strokeWidth={1.75} />
         </div>
         <p className="text-[17px] font-bold text-ink">No books listed yet</p>
-        <p className="mt-2 text-[14px] text-ink-muted">Be the first to list a book in Lohit.</p>
+        <p className="mt-2 text-[14px] text-ink-muted">
+          Be the first to list a book in Lohit.
+        </p>
         <Link
           href="/sell"
           className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md"
