@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle, XCircle, BookOpen, Shield } from "lucide-react";
 import { getPendingBooks, reviewBook } from "@/lib/api";
-import { Book } from "@lhasa/shared";
+import { Book } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { formatPrice, timeAgo, cloudinaryOptimize } from "@/lib/utils";

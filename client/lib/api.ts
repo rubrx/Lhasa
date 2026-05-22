@@ -1,4 +1,4 @@
-import { Book, Inquiry, User } from "@lhasa/shared";
+import { Book, Inquiry, User } from "@/lib/types";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
