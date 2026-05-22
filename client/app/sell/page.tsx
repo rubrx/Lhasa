@@ -332,7 +332,7 @@ export default function SellPage() {
             <textarea
               value={form.description}
               onChange={update("description")}
-              placeholder="Any notes about the book — edition, missing pages, highlights, etc."
+              placeholder="Any notes about the book edition, missing pages, highlights, etc."
               rows={3}
               className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
