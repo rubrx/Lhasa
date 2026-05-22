@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Role } from '../../generated/prisma';
+import { env } from '../config/env';
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     try {// 1. Get the Authorization header
@@ -15,7 +16,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
         const token = authHeader.split(" ")[1];
 
         // 4. Verify the token using jwt.verify
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+        const decoded = jwt.verify(token, env.JWT_SECRET) as {
             userId: number;
             role: Role;
         };
