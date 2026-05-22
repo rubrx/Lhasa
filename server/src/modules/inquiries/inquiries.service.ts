@@ -1,4 +1,5 @@
 import prisma from '../../services/lib/prisma';
+import { ForbiddenError, NotFoundError } from '../../shared/errors';
 
 export const createInquiry = async (
     buyerId: number,
@@ -9,7 +10,7 @@ export const createInquiry = async (
         where: { id: bookId, adminCheck: 'APPROVED' },
     });
 
-    if (!book) throw new Error('BOOK_NOT_FOUND');
+    if (!book) throw new NotFoundError('Book');
 
     return prisma.inquiry.create({
         data: { buyerId, bookId, message },
@@ -21,8 +22,8 @@ export const getBookInquiries = async (bookId: number, userId: number) => {
         where: { id: bookId },
     });
 
-    if (!book) throw new Error('BOOK_NOT_FOUND');
-    if (book.sellerId !== userId) throw new Error('UNAUTHORIZED');
+    if (!book) throw new NotFoundError('Book');
+    if (book.sellerId !== userId) throw new ForbiddenError('Access denied');
 
     return prisma.inquiry.findMany({
         where: { bookId },
