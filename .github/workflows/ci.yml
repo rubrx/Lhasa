@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Type-check, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── Server ─────────────────────────────────────────────────────────────
+
+      - name: Type-check server
+        run: pnpm --filter server exec tsc --noEmit
+
+      - name: Test server
+        run: pnpm --filter server run test
+        env:
+          # These are consumed by the vi.mock in tests — not real values
+          NODE_ENV: test
+
+      - name: Build server
+        run: pnpm --filter server exec tsc
+        env:
+          # tsc only — no real DB/API needed, just needs env to not crash
+          NODE_ENV: production
+          DATABASE_URL: postgresql://ci/ci
+          JWT_SECRET: ci-secret-placeholder-minimum-32-chars
+          FRONTEND_URL: https://example.com
+          CLOUDINARY_CLOUD_NAME: ci
+          CLOUDINARY_API_KEY: ci
+          CLOUDINARY_API_SECRET: ci
+          SMTP_USER: ci@ci.com
+          SMTP_PASS: ci
+
+      # ── Client ─────────────────────────────────────────────────────────────
+
+      - name: Type-check client
+        run: pnpm --filter client exec tsc --noEmit
+
+      - name: Test client
+        run: pnpm --filter client run test
+
+      - name: Build client
+        run: pnpm --filter client run build
+        env:
+          NEXT_PUBLIC_API_URL: https://example-api.onrender.com
