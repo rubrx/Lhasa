@@ -1,91 +1,63 @@
 import prisma from '../../services/lib/prisma';
-import cloudinary from '../../services/lib/cloudinary';
-import { Readable } from 'stream';
+import { ConflictError, NotFoundError } from '../../shared/errors';
+import { uploadBuffer } from '../../shared/upload';
 
-const uploadToCloudinary = (buffer: Buffer, folder: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error || !result) return reject(error);
-        resolve(result.secure_url);
-      }
-    );
-    const readable = new Readable();
-    readable.push(buffer);
-    readable.push(null);
-    readable.pipe(uploadStream);
-  });
-};
+const USER_SELECT = {
+  id: true,
+  name: true,
+  email: true,
+  phone: true,
+  district: true,
+  profileImg: true,
+  role: true,
+  createdAt: true,
+} as const;
 
 export const getMe = async (userId: number) => {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            district: true,
-            profileImg: true,
-            role: true,
-            createdAt: true,
-        },
-    });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: USER_SELECT,
+  });
 
-    if (!user) throw new Error('USER_NOT_FOUND');
-    return user;
+  if (!user) throw new NotFoundError('User');
+  return user;
 };
 
 export const updateMe = async (
-    userId: number,
-    data: {
-        name?: string;
-        phone?: string;
-        district?: string;
-    },
-    file?: Express.Multer.File
+  userId: number,
+  data: { name?: string; phone?: string; district?: string },
+  file?: Express.Multer.File,
 ) => {
-    let profileImg: string | undefined;
-    if (file) {
-        profileImg = await uploadToCloudinary(file.buffer, 'lhasa/profiles');
-    }
+  const profileImg = file
+    ? await uploadBuffer(file.buffer, 'lhasa/profiles')
+    : undefined;
 
-    try {
-        return await prisma.user.update({
-            where: { id: userId },
-            data: {
-                ...data,
-                ...(profileImg && { profileImg }),
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                phone: true,
-                district: true,
-                profileImg: true,
-                role: true,
-                createdAt: true,
-            },
-        });
-    } catch (err: any) {
-        if (err.code === 'P2002') throw new Error('PHONE_EXISTS');
-        throw err;
-    }
+  try {
+    return await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...data,
+        ...(profileImg && { profileImg }),
+      },
+      select: USER_SELECT,
+    });
+  } catch (err: any) {
+    if (err.code === 'P2002') throw new ConflictError('That phone number is already linked to another account');
+    throw err;
+  }
 };
 
 export const getAllUsers = async () => {
-    return prisma.user.findMany({
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            district: true,
-            role: true,
-            createdAt: true,
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+  return prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      district: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
 };
