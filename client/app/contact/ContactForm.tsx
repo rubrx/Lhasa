@@ -2,23 +2,41 @@
 
 import { useState } from "react";
 import { Send, CheckCircle2, Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+
+interface Overrides {
+  name?: string;
+  email?: string;
+  phone?: string;
+  message?: string;
+}
 
 export default function ContactForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const { user } = useAuth();
+
+  const [overrides, setOverrides] = useState<Overrides>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  async function handleSubmit(e: React.FormEvent) {
+  const name = overrides.name ?? user?.name ?? "";
+  const email = overrides.email ?? user?.email ?? "";
+  const phone = overrides.phone ?? user?.phone ?? "";
+  const message = overrides.message ?? "";
+
+  function set(field: keyof Overrides) {
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setOverrides((prev) => ({ ...prev, [field]: e.target.value }));
+  }
+
+  async function handleSubmit(e: React.BaseSyntheticEvent) {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!name.trim() || !email.trim() || !message.trim()) return;
 
     setStatus("sending");
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, phone, message }),
       });
 
       setStatus(res.ok ? "sent" : "error");
@@ -30,20 +48,19 @@ export default function ContactForm() {
   if (status === "sent") {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-light">
-          <CheckCircle2 size={28} className="text-accent" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-light">
+          <CheckCircle2 size={28} className="text-brand" />
         </div>
         <div>
-          <p className="font-serif text-xl font-semibold text-ink">Got it, thanks!</p>
+          <p className="font-display text-xl font-bold text-ink">Got it, thanks!</p>
           <p className="mt-1 text-sm text-ink-muted">
-            We&apos;ll get back to you{email ? " at " + email : ""} soon.
+            We&apos;ll get back to you at{" "}
+            <span className="font-medium text-ink">{email}</span> soon.
           </p>
         </div>
         <button
-          onClick={() => {
-            setName(""); setEmail(""); setMessage(""); setStatus("idle");
-          }}
-          className="mt-2 text-sm font-medium text-accent underline-offset-2 hover:underline"
+          onClick={() => { setOverrides({}); setStatus("idle"); }}
+          className="mt-2 text-sm font-medium text-brand underline-offset-2 hover:underline"
         >
           Send another
         </button>
@@ -53,31 +70,50 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {user && (
+        <p className="text-xs text-ink-subtle">
+          Filled from your account —{" "}
+          <span className="text-ink-muted">edit if needed</span>
+        </p>
+      )}
+
       <div className="flex gap-3">
         <input
           type="text"
-          placeholder="Your name (optional)"
+          placeholder="Your name"
+          required
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="flex-1 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-ink placeholder:text-ink-subtle focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/10"
+          onChange={set("name")}
+          className="flex-1 rounded border border-border bg-surface px-4 py-2.5 text-sm text-ink placeholder:text-ink-subtle outline-none focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
         />
         <input
           type="email"
-          placeholder="Email to reply (optional)"
+          placeholder="Your email"
+          required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm text-ink placeholder:text-ink-subtle focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/10"
+          onChange={set("email")}
+          className="flex-1 rounded border border-border bg-surface px-4 py-2.5 text-sm text-ink placeholder:text-ink-subtle outline-none focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
         />
       </div>
 
+      {(user?.phone || !user) && (
+        <input
+          type="tel"
+          placeholder="Phone number (optional)"
+          value={phone}
+          onChange={set("phone")}
+          className="w-full rounded border border-border bg-surface px-4 py-2.5 text-sm text-ink placeholder:text-ink-subtle outline-none focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
+        />
+      )}
+
       <div className="relative">
         <textarea
-          placeholder="What's on your mind? Bug, idea, or just saying hi — all good."
+          placeholder="What's on your mind? Bug, idea, or just saying hi!"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={set("message")}
           required
           rows={5}
-          className="w-full resize-none rounded-2xl border border-border bg-surface px-4 py-3.5 text-sm text-ink placeholder:text-ink-subtle focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/10"
+          className="w-full resize-none rounded border border-border bg-surface px-4 py-3.5 text-sm text-ink placeholder:text-ink-subtle outline-none focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
         />
         <span className="absolute bottom-3 right-3 text-xs text-ink-subtle">
           {message.length > 0 ? `${message.length} chars` : ""}
@@ -90,8 +126,8 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        disabled={!message.trim() || status === "sending"}
-        className="flex items-center justify-center gap-2 self-end rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={!name.trim() || !email.trim() || !message.trim() || status === "sending"}
+        className="flex items-center justify-center gap-2 self-end rounded bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
       >
         {status === "sending" ? (
           <Loader2 size={15} className="animate-spin" />

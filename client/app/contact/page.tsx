@@ -18,29 +18,29 @@ export default function ContactPage() {
     <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
       {/* Header */}
       <div className="mb-12 text-center">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-accent">
-          We're listening
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-brand">
+          We&apos;re listening
         </p>
-        <h1 className="font-serif text-4xl font-semibold text-ink md:text-5xl">
+        <h1 className="font-display text-4xl font-bold text-ink md:text-5xl">
           Say hello
         </h1>
         <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-ink-muted">
-          Bug, idea, or just a hi — drop us a message and we&apos;ll get back to you.
+          Bug, idea, or just a hi then drop us a message and we&apos;ll get back to you.
           No forms, no tickets, just a message.
         </p>
       </div>
 
       {/* Message box */}
-      <div className="rounded-3xl border border-border bg-surface-raised p-8">
+      <div className="rounded-lg border border-border bg-surface-raised p-8">
         <ContactForm />
       </div>
 
       {/* What we can help with */}
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {reasons.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex flex-col gap-2 rounded-2xl border border-border p-5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-light">
-              <Icon size={14} className="text-accent" />
+          <div key={title} className="flex flex-col gap-2 rounded-lg border border-border p-5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light">
+              <Icon size={14} className="text-brand" />
             </div>
             <p className="text-sm font-medium text-ink">{title}</p>
             <p className="text-xs leading-relaxed text-ink-muted">{desc}</p>
