@@ -8,17 +8,18 @@ import { bookIdSchema, createBookSchema, reviewBookSchema } from './books.schema
 
 const router = Router();
 
-// Public
+// Static routes must come before /:id to avoid the dynamic segment swallowing them
 router.get('/',         BookController.getApprovedBooks);
+router.get('/stats',    BookController.getStats);
+router.get('/my',       authenticate, BookController.getMyBooks);
+router.get('/pending',  authenticate, authorizeAdmin, BookController.getPendingBooks);
+
+// Dynamic
 router.get('/:id',      validate(bookIdSchema, 'params'), BookController.getBookById);
 
-// Authenticated
-router.get('/my',       authenticate, BookController.getMyBooks);
+// Write
 router.post('/',        authenticate, writeLimiter, upload.array('images'), validate(createBookSchema), BookController.createBook);
 router.delete('/:id',   authenticate, validate(bookIdSchema, 'params'), BookController.deleteBook);
-
-// Admin only — must be defined before /:id to avoid route conflict
-router.get('/pending',  authenticate, authorizeAdmin, BookController.getPendingBooks);
 router.patch(
   '/:id/review',
   authenticate,

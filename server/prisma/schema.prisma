@@ -34,6 +34,7 @@ model Book {
   author          String
   price           Float
   description     String?
+  sellerNote      String?
   condition       Condition
   category        Category
   images          String[]
@@ -62,7 +63,7 @@ model Inquiry {
   createdAt  DateTime @default(now())
 
   bookId Int
-  book   Book @relation(fields: [bookId], references: [id])
+  book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   buyerId Int
   buyer   User @relation("BuyerInquiries", fields: [buyerId], references: [id])

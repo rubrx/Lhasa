@@ -66,3 +66,12 @@ export const getPendingBooks = async (_req: Request, res: Response, next: NextFu
         next(err);
     }
 };
+
+export const getStats = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+        const stats = await BookService.getStats();
+        res.status(200).json({ success: true, ...stats });
+    } catch (err) {
+        next(err);
+    }
+};

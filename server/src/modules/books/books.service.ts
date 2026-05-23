@@ -10,6 +10,7 @@ export const createBook = async (
     author: string;
     price: number;
     description?: string;
+    sellerNote?: string;
     condition: Condition;
     category: Category;
   },
@@ -72,7 +73,12 @@ export const getBookById = async (id: number) => {
   });
 
   if (!book) throw new NotFoundError('Book');
-  return book;
+
+  const booksListed = await prisma.book.count({
+    where: { sellerId: book.sellerId, adminCheck: 'APPROVED' },
+  });
+
+  return { ...book, booksListed };
 };
 
 export const getMyBooks = async (sellerId: number) => {
@@ -119,4 +125,13 @@ export const getPendingBooks = async () => {
     },
     orderBy: { createdAt: 'desc' },
   });
+};
+
+export const getStats = async () => {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const [total, thisWeek] = await Promise.all([
+    prisma.book.count({ where: { adminCheck: 'APPROVED' } }),
+    prisma.book.count({ where: { adminCheck: 'APPROVED', createdAt: { gte: sevenDaysAgo } } }),
+  ]);
+  return { total, thisWeek };
 };
