@@ -34,6 +34,7 @@ export interface Book {
   author: string;
   price: number;
   description: string | null;
+  sellerNote: string | null;
   condition: BookCondition;
   category: BookCategory;
   images: string[];
@@ -44,6 +45,7 @@ export interface Book {
   updatedAt: string;
   sellerId: number;
   Seller: BookSeller;
+  booksListed?: number;
 }
 
 export interface Inquiry {

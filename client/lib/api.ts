@@ -128,6 +128,10 @@ export async function getApprovedBooks() {
   return request<{ success: boolean; books: Book[] }>("/api/books");
 }
 
+export async function getBookStats() {
+  return request<{ success: boolean; total: number; thisWeek: number }>("/api/books/stats");
+}
+
 export async function getBookById(id: number) {
   return request<{ success: boolean; book: Book }>(`/api/books/${id}`);
 }

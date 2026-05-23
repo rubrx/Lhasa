@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
-import { Lora, Inter } from "next/font/google";
+import { Fraunces, Lora, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Navbar from "@/components/layout/Navbar";
 import BottomNav from "@/components/layout/BottomNav";
 import Footer from "@/components/layout/Footer";
 
+/* Display — expressive, literary, brand moments */
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+});
+
+/* Editorial body — comfortable for reading, warm serif */
 const lora = Lora({
   subsets: ["latin"],
   variable: "--font-lora",
@@ -13,11 +23,12 @@ const lora = Lora({
   weight: ["400", "500", "600", "700"],
 });
 
-const inter = Inter({
+/* UI — neutral, warm, readable at small sizes */
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-dm-sans",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lhasabraii.shop";
@@ -77,7 +88,7 @@ export const metadata: Metadata = {
         url: "/favicons/android-chrome-512x512.png",
         width: 512,
         height: 512,
-        alt: "Lhasa — Books. Local. Affordable.",
+        alt: "Lhasa Books — Where books find their next reader.",
       },
     ],
   },
@@ -145,7 +156,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${lora.variable} ${inter.variable} font-sans antialiased`}>
+      <body className={`${fraunces.variable} ${lora.variable} ${dmSans.variable} font-sans antialiased`}>
         <Providers>
           <Navbar />
           <main className="min-h-screen pb-20 md:pb-0">{children}</main>
