@@ -18,7 +18,6 @@ export default function CompleteProfilePage() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push("/login");
-    // Already has phone → skip this page
     if (!isLoading && isAuthenticated && user?.phone) router.push("/");
   }, [isLoading, isAuthenticated, user, router]);
 
@@ -47,23 +46,23 @@ export default function CompleteProfilePage() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Image src="/logo.svg" alt="Lhasa" width={22} height={22} />
-            <span className="font-serif text-2xl font-semibold text-ink">Lhasa</span>
+            <span className="font-display text-2xl font-bold text-ink">Lhasa</span>
           </Link>
-          <h1 className="mt-4 font-serif text-2xl font-semibold text-ink">One last step</h1>
+          <h1 className="mt-4 font-display text-2xl font-bold text-ink">One last step</h1>
           <p className="mt-1 text-sm text-ink-muted">
             Hi {user.name.split(" ")[0]}! Add your WhatsApp number so buyers and sellers can reach you.
           </p>
         </div>
 
         {/* Why we need this */}
-        <div className="mb-5 flex items-start gap-3 rounded-xl border border-accent/25 bg-accent-light px-4 py-3.5">
-          <MessageCircle size={16} className="mt-0.5 shrink-0 text-accent" />
-          <p className="text-[13px] leading-relaxed text-accent/90">
-            Lhasa uses WhatsApp for all buyer–seller contact. Your number is only shown to people interested in your listings.
+        <div className="mb-5 flex items-start gap-3 rounded-lg border border-brand/25 bg-brand-light px-4 py-3.5">
+          <MessageCircle size={16} className="mt-0.5 shrink-0 text-brand" />
+          <p className="text-[13px] leading-relaxed text-brand/90">
+            Lhasa Books uses WhatsApp for all buyer–seller contact. Your number is only shown to people interested in your listings.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-surface-raised p-6 shadow-sm">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink">WhatsApp number</label>
             <div className="relative">
@@ -75,7 +74,7 @@ export default function CompleteProfilePage() {
                 placeholder="10-digit mobile number"
                 maxLength={10}
                 autoComplete="tel"
-                className="w-full rounded-xl border border-border bg-surface py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="w-full rounded border border-border bg-surface py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
               />
             </div>
           </div>
@@ -86,13 +85,18 @@ export default function CompleteProfilePage() {
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
               placeholder="e.g. Lohit"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </div>
 
           <button type="submit" disabled={saving}
-            className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50">
-            {saving ? "Saving…" : "Complete profile"}
+            className="w-full rounded bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50">
+            {saving ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Saving…
+              </span>
+            ) : "Complete profile"}
           </button>
         </form>
       </div>

@@ -81,9 +81,9 @@ export default function RegisterPage() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Image src="/logo.svg" alt="Lhasa" width={22} height={22} />
-            <span className="font-serif text-2xl font-semibold text-ink">Lhasa</span>
+            <span className="font-display text-2xl font-bold text-ink">Lhasa</span>
           </Link>
-          <h1 className="mt-4 font-serif text-2xl font-semibold text-ink">Create an account</h1>
+          <h1 className="mt-4 font-display text-2xl font-bold text-ink">Create an account</h1>
           <p className="mt-1 text-sm text-ink-muted">Join the Lohit book community</p>
         </div>
 
@@ -92,7 +92,7 @@ export default function RegisterPage() {
           type="button"
           onClick={() => handleGoogle()}
           disabled={googleLoading}
-          className="mb-4 flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-white py-3 text-[14px] font-medium text-ink shadow-sm transition-all hover:bg-surface-muted hover:shadow-md disabled:opacity-60"
+          className="mb-4 flex w-full items-center justify-center gap-3 rounded border border-border bg-white py-3 text-[14px] font-medium text-ink shadow-sm transition-all hover:bg-surface-muted hover:shadow-md disabled:opacity-60"
         >
           <GoogleIcon />
           {googleLoading ? "Signing in…" : "Continue with Google"}
@@ -104,42 +104,42 @@ export default function RegisterPage() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-surface-raised p-6 shadow-sm">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink">Full name</label>
             <input type="text" value={form.name} onChange={update("name")} placeholder="Your full name" autoComplete="name"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20" />
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink">Email</label>
             <input type="email" value={form.email} onChange={update("email")} placeholder="you@email.com" autoComplete="email"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20" />
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink">Phone number</label>
             <input type="tel" value={form.phone} onChange={update("phone")} placeholder="10-digit mobile number" autoComplete="tel" maxLength={10}
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20" />
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10" />
             <p className="mt-1 text-xs text-ink-muted">Buyers will contact you on this number via WhatsApp.</p>
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink">Password</label>
             <div className="relative">
               <input type={showPassword ? "text" : "password"} value={form.password} onChange={update("password")} placeholder="Min. 6 characters" autoComplete="new-password"
-                className="w-full rounded-xl border border-border bg-surface px-4 py-3 pr-11 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20" />
+                className="w-full rounded border border-border bg-surface px-4 py-3 pr-11 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10" />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted transition-colors hover:text-ink">
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
           <button type="submit" disabled={loading}
-            className="w-full rounded-xl bg-ink py-3 text-sm font-medium text-surface transition-colors hover:bg-ink/80 disabled:opacity-50">
+            className="w-full rounded bg-accent py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50">
             {loading ? "Creating account…" : "Create account"}
           </button>
         </form>
 
         <p className="mt-5 text-center text-sm text-ink-muted">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-accent hover:underline">Sign in</Link>
+          <Link href="/login" className="font-medium text-brand hover:underline">Sign in</Link>
         </p>
       </div>
     </div>

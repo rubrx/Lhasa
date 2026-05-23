@@ -32,23 +32,23 @@ export default function ForgotPasswordPage() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Image src="/logo.svg" alt="Lhasa" width={22} height={22} />
-            <span className="font-serif text-2xl font-semibold text-ink">Lhasa</span>
+            <span className="font-display text-2xl font-bold text-ink">Lhasa</span>
           </Link>
         </div>
 
         {sent ? (
-          <div className="rounded-2xl border border-border bg-white p-8 text-center shadow-sm">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light">
-              <CheckCircle size={24} className="text-accent" strokeWidth={1.75} />
+          <div className="rounded-lg border border-border bg-white p-8 text-center shadow-sm">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-light">
+              <CheckCircle size={24} className="text-brand" strokeWidth={1.75} />
             </div>
-            <h2 className="font-serif text-xl font-semibold text-ink">Check your email</h2>
+            <h2 className="font-display text-xl font-bold text-ink">Check your email</h2>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-muted">
               If <strong>{email}</strong> is registered, you&apos;ll receive a password reset link within a few minutes.
             </p>
             <p className="mt-3 text-[13px] text-ink-subtle">Check your spam folder if you don&apos;t see it.</p>
             <Link
               href="/login"
-              className="mt-6 inline-flex items-center gap-2 text-[14px] font-medium text-accent hover:underline"
+              className="mt-6 inline-flex items-center gap-2 text-[14px] font-medium text-brand hover:underline"
             >
               <ArrowLeft size={14} /> Back to sign in
             </Link>
@@ -56,13 +56,13 @@ export default function ForgotPasswordPage() {
         ) : (
           <>
             <div className="mb-6 text-center">
-              <h1 className="font-serif text-2xl font-semibold text-ink">Forgot password?</h1>
+              <h1 className="font-display text-2xl font-bold text-ink">Forgot password?</h1>
               <p className="mt-1 text-sm text-ink-muted">
                 Enter your email and we&apos;ll send a reset link.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
+            <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-surface-raised p-6 shadow-sm">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-ink">Email address</label>
                 <div className="relative">
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@email.com"
                     autoComplete="email"
-                    className="w-full rounded-xl border border-border bg-surface py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+                    className="w-full rounded border border-border bg-surface py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
                   />
                 </div>
               </div>
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
+                className="w-full rounded bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
               >
                 {loading ? "Sending…" : "Send reset link"}
               </button>
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
 
             <p className="mt-5 text-center text-sm text-ink-muted">
               Remember your password?{" "}
-              <Link href="/login" className="font-medium text-accent hover:underline">Sign in</Link>
+              <Link href="/login" className="font-medium text-brand hover:underline">Sign in</Link>
             </p>
           </>
         )}

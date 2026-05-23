@@ -98,11 +98,11 @@ export default function ProfilePage() {
           <div className="flex items-center gap-4">
             <div className="h-20 w-20 animate-shimmer rounded-full" />
             <div className="space-y-2">
-              <div className="h-6 w-40 animate-shimmer rounded-lg" />
-              <div className="h-4 w-28 animate-shimmer rounded-lg" />
+              <div className="h-6 w-40 animate-shimmer rounded" />
+              <div className="h-4 w-28 animate-shimmer rounded" />
             </div>
           </div>
-          <div className="h-64 animate-shimmer rounded-2xl" />
+          <div className="h-64 animate-shimmer rounded-lg" />
         </div>
       </div>
     );
@@ -124,7 +124,7 @@ export default function ProfilePage() {
         <div className="relative flex-shrink-0">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-accent ring-4 ring-accent-light transition-all hover:ring-accent/30"
+            className="group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-brand ring-4 ring-brand-light transition-all hover:ring-brand/30"
           >
             {avatarSrc ? (
               <Image
@@ -135,7 +135,7 @@ export default function ProfilePage() {
                 unoptimized={!!previewImg}
               />
             ) : (
-              <span className="font-serif text-3xl font-bold text-white">
+              <span className="font-display text-3xl font-bold text-white">
                 {user.name[0]?.toUpperCase()}
               </span>
             )}
@@ -154,22 +154,22 @@ export default function ProfilePage() {
             onChange={handleFileChange}
           />
           {pendingFile && (
-            <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white shadow">
+            <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[9px] font-bold text-white shadow">
               ✓
             </span>
           )}
         </div>
 
         <div>
-          <h1 className="font-serif text-2xl font-bold text-ink">{user.name}</h1>
+          <h1 className="font-display text-2xl font-bold text-ink">{user.name}</h1>
           <p className="mt-0.5 text-[14px] text-ink-muted">{user.email}</p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
             <span
               className={cn(
-                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+                "inline-flex items-center gap-1 rounded px-2.5 py-1 text-[11px] font-semibold",
                 user.role === "ADMIN"
-                  ? "bg-accent text-white"
-                  : "bg-accent-light text-accent"
+                  ? "bg-brand text-white"
+                  : "bg-brand-light text-brand"
               )}
             >
               {user.role === "ADMIN" ? "Admin" : "Member"}
@@ -189,22 +189,22 @@ export default function ProfilePage() {
       </div>
 
       {/* ── Edit form ── */}
-      <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-        <h2 className="mb-5 text-[15px] font-bold text-ink">Edit Profile</h2>
+      <div className="rounded-lg border border-border bg-white p-6 shadow-sm">
+        <h2 className="mb-5 font-display text-[15px] font-bold text-ink">Edit Profile</h2>
         <div className="space-y-4">
           <Field label="Full Name" icon={<User size={13} />}>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your full name"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-[14px] text-ink outline-none transition-all focus:border-accent/50 focus:ring-2 focus:ring-accent/10"
+              className="w-full rounded border border-border bg-surface px-4 py-2.5 text-[14px] text-ink outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </Field>
           <Field label="Email" icon={<Mail size={13} />}>
             <input
               value={user.email}
               disabled
-              className="w-full cursor-not-allowed rounded-xl border border-border bg-surface-muted px-4 py-2.5 text-[14px] text-ink-muted"
+              className="w-full cursor-not-allowed rounded border border-border bg-surface-muted px-4 py-2.5 text-[14px] text-ink-muted"
             />
           </Field>
           <Field label="Phone" icon={<Phone size={13} />}>
@@ -212,7 +212,7 @@ export default function ProfilePage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Your phone number"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-[14px] text-ink outline-none transition-all focus:border-accent/50 focus:ring-2 focus:ring-accent/10"
+              className="w-full rounded border border-border bg-surface px-4 py-2.5 text-[14px] text-ink outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </Field>
           <Field label="District" icon={<MapPin size={13} />}>
@@ -220,14 +220,14 @@ export default function ProfilePage() {
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
               placeholder="Your district"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-[14px] text-ink outline-none transition-all focus:border-accent/50 focus:ring-2 focus:ring-accent/10"
+              className="w-full rounded border border-border bg-surface px-4 py-2.5 text-[14px] text-ink outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </Field>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="mt-6 flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md active:scale-95 disabled:opacity-60"
+          className="mt-6 flex items-center gap-2 rounded bg-accent px-6 py-2.5 text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md active:scale-95 disabled:opacity-60"
         >
           {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
           {saving ? "Saving…" : "Save Changes"}
@@ -237,11 +237,11 @@ export default function ProfilePage() {
       {/* ── My listings link ── */}
       <Link
         href="/dashboard"
-        className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-white p-5 shadow-sm transition-all hover:border-border-strong hover:shadow-md"
+        className="mt-4 flex items-center justify-between rounded-lg border border-border bg-white p-5 shadow-sm transition-all hover:border-border-strong hover:shadow-md"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-light">
-            <BookOpen size={16} className="text-accent" />
+          <div className="flex h-9 w-9 items-center justify-center rounded bg-brand-light">
+            <BookOpen size={16} className="text-brand" />
           </div>
           <div>
             <p className="text-[14px] font-semibold text-ink">My Listings</p>
@@ -254,7 +254,7 @@ export default function ProfilePage() {
       {/* ── Sign out ── */}
       <button
         onClick={handleLogout}
-        className="mt-4 flex w-full items-center gap-2.5 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-[14px] font-medium text-red-600 transition-all hover:bg-red-100"
+        className="mt-4 flex w-full items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 px-5 py-4 text-[14px] font-medium text-red-600 transition-all hover:bg-red-100"
       >
         <LogOut size={15} />
         Sign out of Lhasa

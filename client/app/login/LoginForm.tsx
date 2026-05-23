@@ -86,9 +86,9 @@ export default function LoginForm() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Image src="/logo.svg" alt="Lhasa" width={22} height={22} />
-            <span className="font-serif text-2xl font-semibold text-ink">Lhasa</span>
+            <span className="font-display text-2xl font-bold text-ink">Lhasa</span>
           </Link>
-          <h1 className="mt-4 font-serif text-2xl font-semibold text-ink">Welcome back</h1>
+          <h1 className="mt-4 font-display text-2xl font-bold text-ink">Welcome back</h1>
           <p className="mt-1 text-sm text-ink-muted">Sign in to your account</p>
         </div>
 
@@ -97,7 +97,7 @@ export default function LoginForm() {
           type="button"
           onClick={() => handleGoogle()}
           disabled={googleLoading}
-          className="mb-4 flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-white py-3 text-[14px] font-medium text-ink shadow-sm transition-all hover:bg-surface-muted hover:shadow-md disabled:opacity-60"
+          className="mb-4 flex w-full items-center justify-center gap-3 rounded border border-border bg-white py-3 text-[14px] font-medium text-ink shadow-sm transition-all hover:bg-surface-muted hover:shadow-md disabled:opacity-60"
         >
           <GoogleIcon />
           {googleLoading ? "Signing in…" : "Continue with Google"}
@@ -109,7 +109,7 @@ export default function LoginForm() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-surface-raised p-6 shadow-sm">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-ink">Email or phone number</label>
             <input
@@ -118,14 +118,14 @@ export default function LoginForm() {
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="you@email.com or 10-digit number"
               autoComplete="username"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </div>
 
           <div>
             <div className="mb-1.5 flex items-center justify-between">
               <label className="text-sm font-medium text-ink">Password</label>
-              <Link href="/forgot-password" className="text-[12px] text-accent hover:underline">
+              <Link href="/forgot-password" className="text-[12px] text-brand hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -136,7 +136,7 @@ export default function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 autoComplete="current-password"
-                className="w-full rounded-xl border border-border bg-surface px-4 py-3 pr-11 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="w-full rounded border border-border bg-surface px-4 py-3 pr-11 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
               />
               <button
                 type="button"
@@ -151,7 +151,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-ink py-3 text-sm font-medium text-surface transition-colors hover:bg-ink/80 disabled:opacity-50"
+            className="w-full rounded bg-accent py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>
@@ -159,7 +159,7 @@ export default function LoginForm() {
 
         <p className="mt-5 text-center text-sm text-ink-muted">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-medium text-accent hover:underline">Sign up</Link>
+          <Link href="/register" className="font-medium text-brand hover:underline">Sign up</Link>
         </p>
       </div>
     </div>

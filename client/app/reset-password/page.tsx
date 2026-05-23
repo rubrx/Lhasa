@@ -40,11 +40,11 @@ function ResetForm() {
 
   if (done) {
     return (
-      <div className="rounded-2xl border border-border bg-white p-8 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-light">
-          <CheckCircle size={24} className="text-accent" strokeWidth={1.75} />
+      <div className="rounded-lg border border-border bg-white p-8 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-light">
+          <CheckCircle size={24} className="text-brand" strokeWidth={1.75} />
         </div>
-        <h2 className="font-serif text-xl font-semibold text-ink">Password reset!</h2>
+        <h2 className="font-display text-xl font-bold text-ink">Password reset!</h2>
         <p className="mt-2 text-[14px] text-ink-muted">Redirecting you to sign in…</p>
       </div>
     );
@@ -52,9 +52,9 @@ function ResetForm() {
 
   if (!token) {
     return (
-      <div className="rounded-2xl border border-border bg-white p-8 text-center shadow-sm">
+      <div className="rounded-lg border border-border bg-white p-8 text-center shadow-sm">
         <p className="text-[14px] text-ink-muted">Invalid or missing reset link.</p>
-        <Link href="/forgot-password" className="mt-4 inline-block text-[14px] font-medium text-accent hover:underline">
+        <Link href="/forgot-password" className="mt-4 inline-block text-[14px] font-medium text-brand hover:underline">
           Request a new one
         </Link>
       </div>
@@ -62,7 +62,7 @@ function ResetForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-border bg-surface-raised p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-surface-raised p-6 shadow-sm">
       <div>
         <label className="mb-1.5 block text-sm font-medium text-ink">New password</label>
         <div className="relative">
@@ -71,7 +71,7 @@ function ResetForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Min. 6 characters"
-            className="w-full rounded-xl border border-border bg-surface px-4 py-3 pr-11 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="w-full rounded border border-border bg-surface px-4 py-3 pr-11 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
           />
           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink">
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -85,11 +85,11 @@ function ResetForm() {
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           placeholder="Repeat your new password"
-          className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
         />
       </div>
       <button type="submit" disabled={loading}
-        className="w-full rounded-xl bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50">
+        className="w-full rounded bg-accent py-3 text-sm font-semibold text-white transition-colors hover:bg-accent-hover disabled:opacity-50">
         {loading ? "Resetting…" : "Reset password"}
       </button>
     </form>
@@ -103,12 +103,12 @@ export default function ResetPasswordPage() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Image src="/logo.svg" alt="Lhasa" width={22} height={22} />
-            <span className="font-serif text-2xl font-semibold text-ink">Lhasa</span>
+            <span className="font-display text-2xl font-bold text-ink">Lhasa</span>
           </Link>
-          <h1 className="mt-4 font-serif text-2xl font-semibold text-ink">Set new password</h1>
+          <h1 className="mt-4 font-display text-2xl font-bold text-ink">Set new password</h1>
           <p className="mt-1 text-sm text-ink-muted">Choose a strong password for your account.</p>
         </div>
-        <Suspense fallback={<div className="h-48 animate-shimmer rounded-2xl" />}>
+        <Suspense fallback={<div className="h-48 animate-shimmer rounded-lg" />}>
           <ResetForm />
         </Suspense>
       </div>
