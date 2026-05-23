@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { cloudinaryOptimize, cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const { user, isAuthenticated, isAdmin } = useAuth();
   const pathname = usePathname();
 
   return (
@@ -98,13 +98,17 @@ export default function Navbar() {
                   </span>
                 )}
               </Link>
-              <button
-                onClick={logout}
-                className="flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-[14px] font-medium text-ink-muted transition-all duration-150 hover:border-border-strong hover:text-ink"
+              <Link
+                href="/contact"
+                title="Contact us"
+                className={cn(
+                  "flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-[14px] font-medium transition-all duration-150 hover:border-border-strong hover:text-ink",
+                  pathname === "/contact" ? "text-accent border-accent/30" : "text-ink-muted"
+                )}
               >
-                <LogOut size={14} />
-                Sign out
-              </button>
+                <MessageCircle size={14} />
+                Contact
+              </Link>
             </>
           ) : (
             <>
