@@ -60,7 +60,7 @@ export default function AdminPage() {
   if (authLoading || loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
       </div>
     );
   }
@@ -70,11 +70,11 @@ export default function AdminPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-light">
-          <Shield size={18} className="text-accent" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-light">
+          <Shield size={18} className="text-brand" />
         </div>
         <div>
-          <h1 className="font-serif text-2xl font-semibold text-ink">
+          <h1 className="font-display text-2xl font-bold text-ink">
             Admin Panel
           </h1>
           <p className="text-sm text-ink-muted">
@@ -84,10 +84,10 @@ export default function AdminPage() {
       </div>
 
       {books.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-surface-raised px-6 py-16 text-center">
+        <div className="rounded-lg border border-border bg-surface-raised px-6 py-16 text-center">
           <CheckCircle
             size={40}
-            className="mx-auto mb-4 text-accent"
+            className="mx-auto mb-4 text-brand"
             strokeWidth={1}
           />
           <p className="font-medium text-ink">All caught up!</p>
@@ -104,11 +104,11 @@ export default function AdminPage() {
             return (
               <div
                 key={book.id}
-                className="overflow-hidden rounded-2xl border border-border bg-surface-raised"
+                className="overflow-hidden rounded-lg border border-border bg-surface-raised"
               >
                 <div className="flex gap-4 p-5">
                   {/* Cover */}
-                  <div className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-accent-light">
+                  <div className="relative h-24 w-16 flex-shrink-0 overflow-hidden rounded bg-brand-light">
                     {cover ? (
                       <Image
                         src={cover}
@@ -120,7 +120,7 @@ export default function AdminPage() {
                       <div className="flex h-full items-center justify-center">
                         <BookOpen
                           size={20}
-                          className="text-accent"
+                          className="text-brand"
                           strokeWidth={1}
                         />
                       </div>
@@ -144,7 +144,7 @@ export default function AdminPage() {
                     )}
 
                     {/* Seller */}
-                    <div className="mt-2 rounded-lg bg-surface px-3 py-2">
+                    <div className="mt-2 rounded bg-surface px-3 py-2">
                       <p className="text-xs font-medium text-ink">
                         {book.Seller.name}
                       </p>
@@ -161,7 +161,7 @@ export default function AdminPage() {
                     {book.images.map((img, i) => (
                       <div
                         key={i}
-                        className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded-lg"
+                        className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded"
                       >
                         <Image
                           src={cloudinaryOptimize(img, 100)}
@@ -186,13 +186,13 @@ export default function AdminPage() {
                     }
                     placeholder="Rejection reason (required only if rejecting)"
                     rows={2}
-                    className="w-full resize-none rounded-xl border border-border bg-surface-raised px-3 py-2 text-sm text-ink placeholder:text-ink-muted outline-none focus:border-accent"
+                    className="w-full resize-none rounded border border-border bg-surface-raised px-3 py-2 text-sm text-ink placeholder:text-ink-muted outline-none focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleReview(book.id, "APPROVED")}
                       disabled={isProcessing}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent/90 disabled:opacity-50"
+                      className="flex flex-1 items-center justify-center gap-2 rounded bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
                     >
                       <CheckCircle size={15} />
                       Approve
@@ -200,7 +200,7 @@ export default function AdminPage() {
                     <button
                       onClick={() => handleReview(book.id, "REJECTED")}
                       disabled={isProcessing}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50"
+                      className="flex flex-1 items-center justify-center gap-2 rounded border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50"
                     >
                       <XCircle size={15} />
                       Reject

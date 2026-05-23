@@ -8,9 +8,9 @@ import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
 const CONDITIONS = [
-  { value: "LIKE_NEW", label: "Like New", hint: "Barely used, no visible wear" },
-  { value: "GOOD", label: "Good", hint: "Some wear, fully readable" },
-  { value: "POOR", label: "Fair", hint: "Worn but complete and usable" },
+  { value: "LIKE_NEW", label: "Pristine", hint: "Unread or barely opened, spine uncreased" },
+  { value: "GOOD", label: "Gently Read", hint: "Visible love, fully intact and readable" },
+  { value: "POOR", label: "Well Loved", hint: "Heavy use, may have notes or highlights" },
 ];
 
 const CATEGORIES = [
@@ -30,6 +30,7 @@ export default function SellPage() {
     author: "",
     price: "",
     description: "",
+    sellerNote: "",
     condition: "LIKE_NEW",
     category: "TEXTBOOK",
   });
@@ -58,7 +59,6 @@ export default function SellPage() {
       return;
     }
     setImages(arr);
-    // Revoke old previews
     previews.forEach((p) => URL.revokeObjectURL(p));
     setPreviews(arr.map((f) => URL.createObjectURL(f)));
   };
@@ -94,6 +94,7 @@ export default function SellPage() {
       fd.append("author", form.author);
       fd.append("price", form.price);
       fd.append("description", form.description);
+      fd.append("sellerNote", form.sellerNote);
       fd.append("condition", form.condition);
       fd.append("category", form.category);
       images.forEach((img) => fd.append("images", img));
@@ -111,7 +112,7 @@ export default function SellPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
       </div>
     );
   }
@@ -121,10 +122,10 @@ export default function SellPage() {
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-16 text-center">
         <CheckCircle2
           size={56}
-          className="mb-4 text-accent"
+          className="mb-4 text-brand"
           strokeWidth={1.5}
         />
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+        <h2 className="font-display text-2xl font-bold text-ink">
           Book submitted!
         </h2>
         <p className="mt-2 max-w-xs text-sm text-ink-muted">
@@ -135,17 +136,17 @@ export default function SellPage() {
           <button
             onClick={() => {
               setSuccess(false);
-              setForm({ name: "", author: "", price: "", description: "", condition: "LIKE_NEW", category: "TEXTBOOK" });
+              setForm({ name: "", author: "", price: "", description: "", sellerNote: "", condition: "LIKE_NEW", category: "TEXTBOOK" });
               setImages([]);
               setPreviews([]);
             }}
-            className="rounded-xl border border-border px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-accent-light"
+            className="rounded border border-border px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-brand-light"
           >
             List another book
           </button>
           <button
             onClick={() => router.push("/dashboard")}
-            className="rounded-xl bg-ink px-5 py-2.5 text-sm font-medium text-surface transition-colors hover:bg-ink/80"
+            className="rounded bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-hover"
           >
             My Dashboard
           </button>
@@ -157,7 +158,7 @@ export default function SellPage() {
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="font-serif text-3xl font-semibold text-ink">
+        <h1 className="font-display text-3xl font-bold text-ink">
           List a book
         </h1>
         <p className="mt-1 text-sm text-ink-muted">
@@ -170,28 +171,34 @@ export default function SellPage() {
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">
             Photos{" "}
-            <span className="text-ink-muted font-normal">(3–5 required)</span>
+            <span className="font-normal text-ink-muted">(3–5 required)</span>
           </label>
 
           {previews.length === 0 ? (
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border bg-surface-raised py-10 text-ink-muted transition-colors hover:border-accent hover:bg-accent-light hover:text-accent"
-            >
-              <ImagePlus size={32} strokeWidth={1} />
-              <div className="text-center">
-                <p className="text-sm font-medium">Tap to add photos</p>
-                <p className="mt-0.5 text-xs">Select 3–5 images of your book</p>
-              </div>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="flex w-full flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border bg-surface-raised py-10 text-ink-muted transition-colors hover:border-brand hover:bg-brand-light hover:text-brand"
+              >
+                <ImagePlus size={32} strokeWidth={1} />
+                <div className="text-center">
+                  <p className="text-sm font-medium">Tap to add photos</p>
+                  <p className="mt-0.5 text-xs">Select 3–5 images of your book</p>
+                </div>
+              </button>
+              <p className="mt-2 text-[11px] leading-relaxed text-ink-subtle">
+                Take real photos of your actual copy — front cover, back, and spine.
+                Listings with genuine photos get noticed far more than ones with images picked from the internet.
+              </p>
+            </>
           ) : (
             <div className="space-y-3">
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                 {previews.map((url, i) => (
                   <div
                     key={i}
-                    className="group relative aspect-[3/4] overflow-hidden rounded-xl border border-border"
+                    className="group relative aspect-3/4 overflow-hidden rounded border border-border"
                   >
                     <img
                       src={url}
@@ -211,7 +218,7 @@ export default function SellPage() {
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
-                    className="flex aspect-[3/4] flex-col items-center justify-center rounded-xl border-2 border-dashed border-border text-ink-muted transition-colors hover:border-accent hover:text-accent"
+                    className="flex aspect-3/4 flex-col items-center justify-center rounded border-2 border-dashed border-border text-ink-muted transition-colors hover:border-brand hover:text-brand"
                   >
                     <Upload size={18} strokeWidth={1.5} />
                     <span className="mt-1 text-[10px]">Add</span>
@@ -250,7 +257,7 @@ export default function SellPage() {
               value={form.name}
               onChange={update("name")}
               placeholder="e.g. Physics Part I — Class 12"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </div>
 
@@ -263,7 +270,7 @@ export default function SellPage() {
               value={form.author}
               onChange={update("author")}
               placeholder="e.g. NCERT"
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </div>
 
@@ -275,7 +282,7 @@ export default function SellPage() {
               <select
                 value={form.category}
                 onChange={update("category")}
-                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-accent"
+                className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-brand/50"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -294,7 +301,7 @@ export default function SellPage() {
                 onChange={update("price")}
                 placeholder="e.g. 150"
                 min="1"
-                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="w-full rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
               />
             </div>
           </div>
@@ -309,10 +316,10 @@ export default function SellPage() {
                   key={c.value}
                   type="button"
                   onClick={() => setForm((prev) => ({ ...prev, condition: c.value }))}
-                  className={`rounded-xl border p-3 text-left transition-all ${
+                  className={`rounded border p-3 text-left transition-all ${
                     form.condition === c.value
-                      ? "border-accent bg-accent-light text-accent"
-                      : "border-border bg-surface-raised text-ink hover:border-accent/50"
+                      ? "border-brand bg-brand-light text-brand"
+                      : "border-border bg-surface-raised text-ink hover:border-brand/30"
                   }`}
                 >
                   <p className="text-xs font-semibold">{c.label}</p>
@@ -334,7 +341,24 @@ export default function SellPage() {
               onChange={update("description")}
               placeholder="Any notes about the book edition, missing pages, highlights, etc."
               rows={3}
-              className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="w-full resize-none rounded border border-border bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-ink">
+              Why are you passing this on?{" "}
+              <span className="font-normal text-ink-muted">(optional)</span>
+            </label>
+            <p className="mb-2 text-[12px] text-ink-subtle">
+              Readers love knowing the story behind a book.
+            </p>
+            <textarea
+              value={form.sellerNote}
+              onChange={update("sellerNote")}
+              placeholder='e.g. "Read this three times. It changed how I think about home."'
+              rows={2}
+              className="w-full resize-none rounded border border-border bg-surface px-4 py-3 text-[14px] text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
             />
           </div>
         </div>
@@ -342,9 +366,16 @@ export default function SellPage() {
         <button
           type="submit"
           disabled={submitting || images.length < 3}
-          className="w-full rounded-xl bg-ink py-3.5 text-sm font-medium text-surface transition-colors hover:bg-ink/80 disabled:opacity-50"
+          className="w-full rounded bg-accent py-3.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
-          {submitting ? "Submitting…" : "Submit for approval"}
+          {submitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              Submitting…
+            </span>
+          ) : (
+            "Submit for approval"
+          )}
         </button>
 
         <p className="text-center text-xs text-ink-muted">

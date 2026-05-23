@@ -79,13 +79,13 @@ export default function DashboardPage() {
   if (authLoading || loading) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-border" />
+        <div className="space-y-4">
+          <div className="h-8 w-48 animate-shimmer rounded bg-border" />
           <div className="grid gap-3">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-24 w-full rounded-xl border border-border bg-surface-raised"
+                className="h-24 w-full animate-shimmer rounded-lg border border-border bg-surface-raised"
               />
             ))}
           </div>
@@ -99,7 +99,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-serif text-3xl font-semibold text-ink">
+          <h1 className="font-display text-3xl font-bold text-ink">
             My Books
           </h1>
           <p className="mt-1 text-sm text-ink-muted">
@@ -111,7 +111,7 @@ export default function DashboardPage() {
         </div>
         <Link
           href="/sell"
-          className="flex items-center gap-1.5 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-surface transition-colors hover:bg-ink/80"
+          className="flex items-center gap-1.5 rounded bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
         >
           <Plus size={15} />
           <span className="hidden sm:inline">List a book</span>
@@ -131,9 +131,9 @@ export default function DashboardPage() {
           ).map(([status, label]) => (
             <div
               key={status}
-              className="rounded-xl border border-border bg-surface-raised p-4 text-center"
+              className="rounded-lg border border-border bg-surface-raised p-4 text-center"
             >
-              <p className="font-serif text-2xl font-semibold text-ink">
+              <p className="font-display text-2xl font-bold text-ink">
                 {books.filter((b) => b.adminCheck === status).length}
               </p>
               <p className="mt-1 text-xs text-ink-muted">{label}</p>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
 
       {/* Books list */}
       {books.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-surface-raised px-6 py-16 text-center">
+        <div className="rounded-lg border border-border bg-surface-raised px-6 py-16 text-center">
           <BookOpen
             size={40}
             className="mx-auto mb-4 text-border"
@@ -156,7 +156,7 @@ export default function DashboardPage() {
           </p>
           <Link
             href="/sell"
-            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+            className="mt-5 inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
           >
             <Plus size={15} /> List a book
           </Link>
@@ -172,15 +172,15 @@ export default function DashboardPage() {
             return (
               <div
                 key={book.id}
-                className="flex items-center gap-4 rounded-xl border border-border bg-surface-raised p-4 transition-shadow hover:shadow-sm"
+                className="flex items-center gap-4 rounded-lg border border-border bg-surface-raised p-4 transition-shadow hover:shadow-sm"
               >
                 {/* Thumbnail */}
-                <div className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-accent-light">
+                <div className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded bg-brand-light">
                   {cover ? (
                     <Image src={cover} alt={book.name} fill className="object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <span className="font-serif text-xs font-semibold text-accent">
+                      <span className="font-display text-xs font-semibold text-brand">
                         {book.name.slice(0, 2).toUpperCase()}
                       </span>
                     </div>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                   <div className="mt-1.5 flex flex-wrap items-center gap-2">
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                        "inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-[11px] font-medium",
                         status.className
                       )}
                     >
@@ -223,7 +223,7 @@ export default function DashboardPage() {
                   {book.adminCheck === "APPROVED" && (
                     <Link
                       href={`/books/${book.id}`}
-                      className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:text-ink"
+                      className="rounded border border-border px-3 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:text-ink"
                     >
                       View
                     </Link>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => handleDelete(book.id, book.name)}
                     disabled={deletingId === book.id}
-                    className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
+                    className="rounded p-2 text-ink-muted transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
                   >
                     <Trash2 size={15} />
                   </button>
