@@ -31,9 +31,9 @@ export default function RecentBooks() {
 
   if (books.length === 0) {
     return (
-      <div className="rounded-3xl border border-border bg-white px-6 py-20 text-center shadow-sm">
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-light">
-          <Repeat2 size={28} className="text-accent" strokeWidth={1.75} />
+      <div className="rounded-lg border border-border bg-white px-6 py-20 text-center shadow-sm">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-lg bg-brand-light">
+          <Repeat2 size={28} className="text-brand" strokeWidth={1.75} />
         </div>
         <p className="text-[17px] font-bold text-ink">No books listed yet</p>
         <p className="mt-2 text-[14px] text-ink-muted">
@@ -41,7 +41,7 @@ export default function RecentBooks() {
         </p>
         <Link
           href="/sell"
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md"
+          className="mt-6 inline-flex items-center gap-2 rounded bg-accent px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md"
         >
           <BookOpen size={15} />
           List a book

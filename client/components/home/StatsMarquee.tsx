@@ -21,7 +21,7 @@ export default function StatsMarquee() {
       <div className="flex animate-marquee whitespace-nowrap">
         {doubled.map((item, i) => (
           <span key={i} className="inline-flex shrink-0 items-center text-sm">
-            <span className="font-serif font-semibold text-ink">{item.value}</span>
+            <span className="font-display font-semibold text-brand">{item.value}</span>
             <span className="ml-1.5 text-ink-muted">{item.label}</span>
             <Dot />
           </span>
