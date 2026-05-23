@@ -28,7 +28,7 @@ export default function Navbar() {
 
         {/* ── Logo ── */}
         <Link href="/" className="group flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-brand-light p-1.5 transition-all duration-200 group-hover:bg-brand/15">
+          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-accent-light p-1.5 transition-all duration-200 group-hover:bg-accent/15">
             <Image src="/logo.svg" alt="Lhasa Books" width={28} height={28} />
           </div>
           <div className="flex flex-col leading-none">
