@@ -291,7 +291,7 @@ export default function BookDetailClient({ id }: { id: string }) {
                 </p>
                 {book.Seller.phone && (
                   <a
-                    href={`https://wa.me/91${book.Seller.phone.replace(/\D/g, "")}`}
+                    href={`https://wa.me/91${book.Seller.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi! I saw your listing on Lhasa Books and I'm interested in *${book.name}* by ${book.author} (₹${book.price}). Is it still available?`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex w-full items-center justify-center gap-2 rounded bg-[#25D366] px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
