@@ -41,7 +41,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="mt-4 max-w-[220px] text-[13px] leading-relaxed text-ink-muted">
-              Where books find their next reader — a community marketplace for Lohit district. No fees, no commissions.
+              Where books find their next reader, a community marketplace for Lohit district. No fees, no commissions.
             </p>
             <div className="mt-5 flex items-center gap-1.5">
               <MapPin size={12} className="shrink-0 text-brand" />
