@@ -306,6 +306,16 @@ export default async function HomePage() {
               <RecentBooks />
             </Suspense>
           </RecentBooksErrorBoundary>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/books"
+              className="group inline-flex items-center gap-2 rounded border border-border bg-surface-raised px-6 py-2.5 text-[14px] font-semibold text-ink-muted shadow-sm transition-all duration-150 hover:border-border-strong hover:text-ink"
+            >
+              Browse all books
+              <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
         </div>
       </section>
 
