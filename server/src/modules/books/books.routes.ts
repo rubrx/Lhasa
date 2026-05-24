@@ -4,12 +4,12 @@ import { authenticate, authorizeAdmin } from '../../middlewares/auth.middleware'
 import { upload } from '../../services/lib/multer';
 import { validate } from '../../middleware/validate';
 import { writeLimiter } from '../../middleware/rate-limit';
-import { bookIdSchema, createBookSchema, reviewBookSchema } from './books.schemas';
+import { bookIdSchema, createBookSchema, reviewBookSchema, getBooksQuerySchema } from './books.schemas';
 
 const router = Router();
 
 // Static routes must come before /:id to avoid the dynamic segment swallowing them
-router.get('/',         BookController.getApprovedBooks);
+router.get('/',         validate(getBooksQuerySchema, 'query'), BookController.getApprovedBooks);
 router.get('/stats',    BookController.getStats);
 router.get('/my',       authenticate, BookController.getMyBooks);
 router.get('/pending',  authenticate, authorizeAdmin, BookController.getPendingBooks);

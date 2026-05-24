@@ -1,5 +1,22 @@
 import { Resend } from "resend";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+
+// Simple in-memory rate limiter: max 3 submissions per IP per 10 minutes
+const ipCache = new Map<string, { count: number; resetAt: number }>();
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 3;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipCache.get(ip);
+  if (!entry || now > entry.resetAt) {
+    ipCache.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= MAX_PER_WINDOW) return true;
+  entry.count++;
+  return false;
+}
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -71,11 +88,28 @@ function buildEmailHtml(name: string, email: string, phone: string | undefined, 
 </html>`;
 }
 
-export async function POST(req: Request) {
-  const { name, email, phone, message } = await req.json();
+export async function POST(req: NextRequest) {
+  // Rate limiting by IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many messages. Try again later." }, { status: 429 });
+  }
+
+  const body = await req.json();
+  const { name, email, phone, message } = body;
+
+  // Honeypot: bots fill in hidden fields humans don't see
+  if (body.website || body.url) {
+    return NextResponse.json({ ok: true }); // silently accept, don't actually send
+  }
 
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
     return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
+  }
+
+  // Basic length guard
+  if (name.length > 100 || email.length > 200 || message.length > 2000) {
+    return NextResponse.json({ error: "Input too long." }, { status: 400 });
   }
 
   const { error } = await resend.emails.send({

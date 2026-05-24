@@ -14,15 +14,28 @@ function authHeaders(): Record<string, string> {
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    credentials: "include", // send cookies cross-origin (needed for Vercel → Render)
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || "Request failed");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15_000);
+
+  try {
+    const response = await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      credentials: "include",
+      signal: options.signal ?? controller.signal,
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Request failed");
+    }
+    return data as T;
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Error("Request timed out — please try again");
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
   }
-  return data as T;
 }
 
 // ─── Auth ──────────────────────────────────────────────────────────────────

@@ -20,6 +20,11 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Verify SMTP connection at startup — warn but don't crash if it fails
+transporter.verify().catch((err) => {
+    console.warn('[SMTP] Connection check failed — password-reset emails will not work:', err.message);
+});
+
 // ─── Register ────────────────────────────────────────────────────────────
 export const registerUser = async (data: {
     name: string;
@@ -107,6 +112,12 @@ export const forgotPassword = async (email: string) => {
     const frontendOrigin = env.FRONTEND_URL.split(',')[0].trim();
     const resetUrl = `${frontendOrigin}/reset-password?token=${resetToken}`;
 
+    const safeName = user.name
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
     await transporter.sendMail({
         from: env.SMTP_FROM ?? `"Lhasa Books" <${env.SMTP_USER}>`,
         to: email,
@@ -114,7 +125,7 @@ export const forgotPassword = async (email: string) => {
         html: `
             <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
                 <h2 style="font-size:20px;color:#0a0a0a;margin-bottom:8px">Reset your password</h2>
-                <p style="color:#444;line-height:1.6">Hi ${user.name},</p>
+                <p style="color:#444;line-height:1.6">Hi ${safeName},</p>
                 <p style="color:#444;line-height:1.6">Click the button below to reset your password. This link expires in <strong>15 minutes</strong>.</p>
                 <a href="${resetUrl}" style="display:inline-block;margin:20px 0;padding:12px 24px;background:#3d6b52;color:#fff;border-radius:10px;text-decoration:none;font-weight:600">Reset password</a>
                 <p style="color:#888;font-size:13px">If you didn't request this, you can safely ignore this email.</p>

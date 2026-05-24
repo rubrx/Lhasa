@@ -9,6 +9,7 @@ interface Overrides {
   email?: string;
   phone?: string;
   message?: string;
+  website?: string; // honeypot — never shown to users, bots fill it
 }
 
 export default function ContactForm() {
@@ -36,7 +37,7 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, message }),
+        body: JSON.stringify({ name, email, phone, message, website: overrides.website ?? "" }),
       });
 
       setStatus(res.ok ? "sent" : "error");
@@ -70,6 +71,16 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* Honeypot — hidden from real users, bots fill this in */}
+      <input
+        type="text"
+        name="website"
+        aria-hidden="true"
+        tabIndex={-1}
+        autoComplete="off"
+        onChange={(e) => setOverrides((p) => ({ ...p, website: e.target.value }))}
+        style={{ display: "none" }}
+      />
       {user && (
         <p className="text-xs text-ink-subtle">
           Filled from your account —{" "}

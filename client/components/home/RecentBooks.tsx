@@ -22,8 +22,8 @@ export default function RecentBooks() {
   const [books, setBooks] = useState<Book[] | null>(null);
 
   useEffect(() => {
-    getApprovedBooks()
-      .then((result) => setBooks(result.books.slice(0, 8)))
+    getApprovedBooks({ page: 1, limit: 8 })
+      .then((result) => setBooks(result.books))
       .catch(() => setBooks([]));
   }, []);
 

@@ -231,6 +231,7 @@ export default function DashboardPage() {
                   <button
                     onClick={() => handleDelete(book.id, book.name)}
                     disabled={deletingId === book.id}
+                    aria-label={`Delete "${book.name}"`}
                     className="rounded p-2 text-ink-muted transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-40"
                   >
                     <Trash2 size={15} />

@@ -53,14 +53,16 @@ export default function SellPage() {
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
-    const arr = Array.from(files).slice(0, 5);
-    if (arr.length < 2) {
+    const incoming = Array.from(files);
+    const combined = [...images, ...incoming].slice(0, 5);
+    // Only enforce the minimum when the user is making their first selection
+    if (images.length === 0 && combined.length < 2) {
       toast.error("Please select at least 2 images");
       return;
     }
-    setImages(arr);
-    previews.forEach((p) => URL.revokeObjectURL(p));
-    setPreviews(arr.map((f) => URL.createObjectURL(f)));
+    const newPreviews = incoming.slice(0, 5 - images.length).map((f) => URL.createObjectURL(f));
+    setImages(combined);
+    setPreviews((prev) => [...prev, ...newPreviews].slice(0, 5));
   };
 
   const removeImage = (index: number) => {
@@ -208,6 +210,7 @@ export default function SellPage() {
                     <button
                       type="button"
                       onClick={() => removeImage(i)}
+                      aria-label={`Remove photo ${i + 1}`}
                       className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
                     >
                       <X size={12} />

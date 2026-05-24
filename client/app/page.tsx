@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, MapPin, Shield, Zap, MessageCircle } from "lucide-react";
 import SearchHero from "@/components/home/SearchHero";
 import RecentBooks from "@/components/home/RecentBooks";
+import RecentBooksErrorBoundary from "@/components/home/RecentBooksErrorBoundary";
 import BookCardSkeleton from "@/components/books/BookCardSkeleton";
-import { getBookStats } from "@/lib/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const categories = [
   "Fiction", "Non-fiction", "Science", "Mathematics", "History",
@@ -90,8 +91,22 @@ function SkeletonGrid() {
   );
 }
 
+async function fetchStats(): Promise<{ total: number; thisWeek: number }> {
+  try {
+    const res = await fetch(`${API_URL}/api/books/stats`, {
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return { total: 0, thisWeek: 0 };
+    const data = await res.json();
+    return { total: data.total ?? 0, thisWeek: data.thisWeek ?? 0 };
+  } catch {
+    return { total: 0, thisWeek: 0 };
+  }
+}
+
 export default async function HomePage() {
-  const stats = await getBookStats().catch(() => ({ total: 0, thisWeek: 0 }));
+  const stats = await fetchStats();
 
   return (
     <div className="overflow-x-hidden">
@@ -286,9 +301,11 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <Suspense fallback={<SkeletonGrid />}>
-            <RecentBooks />
-          </Suspense>
+          <RecentBooksErrorBoundary>
+            <Suspense fallback={<SkeletonGrid />}>
+              <RecentBooks />
+            </Suspense>
+          </RecentBooksErrorBoundary>
         </div>
       </section>
 

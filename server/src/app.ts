@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import prisma from './services/lib/prisma';
 import { env } from './config/env';
 import { corsOptions } from './lib/cors';
@@ -16,6 +17,9 @@ const app = express();
 // Trust Render's proxy so rate-limit sees the real client IP, not the proxy IP
 app.set('trust proxy', 1);
 
+// Gzip all responses — must come early, before route handlers
+app.use(compression());
+
 // Security headers — must come before CORS so headers aren't overwritten
 app.use(helmet());
 
@@ -24,7 +28,7 @@ app.use(helmet());
 app.options('/{*path}', cors(corsOptions));
 app.use(cors(corsOptions));
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50kb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Global rate limit — applied to all routes

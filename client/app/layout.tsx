@@ -6,24 +6,24 @@ import Navbar from "@/components/layout/Navbar";
 import BottomNav from "@/components/layout/BottomNav";
 import Footer from "@/components/layout/Footer";
 
-/* Display — expressive, literary, brand moments */
+/* Display — headings and brand moments only */
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["600", "700", "800"],
   style: ["normal", "italic"],
 });
 
-/* Editorial body — comfortable for reading, warm serif */
+/* Editorial body — comfortable for reading */
 const lora = Lora({
   subsets: ["latin"],
   variable: "--font-lora",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
 });
 
-/* UI — neutral, warm, readable at small sizes */
+/* UI — neutral, readable at small sizes */
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",

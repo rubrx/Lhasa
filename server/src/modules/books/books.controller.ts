@@ -14,15 +14,18 @@ export const createBook = async (req: Request, res: Response, next: NextFunction
 
 export const getApprovedBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { search, category, condition, maxPrice, page, limit } = req.query;
+        // query params already validated and coerced by getBooksQuerySchema
+        const { search, category, condition, maxPrice, page, limit } = req.query as any;
         const result = await BookService.getApprovedBooks({
-            search: search as string | undefined,
-            category: category as any,
-            condition: condition as any,
-            maxPrice: maxPrice ? Number(maxPrice) : undefined,
-            page: page ? Number(page) : undefined,
-            limit: limit ? Number(limit) : undefined,
+            search,
+            category,
+            condition,
+            maxPrice,
+            page,
+            limit,
         });
+        // Cache public book listings for 60s; serve stale for 5min while revalidating
+        res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
         res.status(200).json({ success: true, ...result });
     } catch (err) {
         next(err);
@@ -78,6 +81,8 @@ export const getPendingBooks = async (_req: Request, res: Response, next: NextFu
 export const getStats = async (_req: Request, res: Response, next: NextFunction) => {
     try {
         const stats = await BookService.getStats();
+        // Cache stats for 5min; serve stale for 10min while revalidating
+        res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
         res.status(200).json({ success: true, ...stats });
     } catch (err) {
         next(err);

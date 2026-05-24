@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Search, SlidersHorizontal, X, Shuffle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { getApprovedBooks } from "@/lib/api";
 import { Book, BookCategory, BookCondition } from "@/lib/types";
 import BookCard from "@/components/books/BookCard";
@@ -40,17 +40,32 @@ function BookSkeleton() {
 
 export default function BooksPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Initialise state from URL on mount
   const [books, setBooks] = useState<Book[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [category, setCategory] = useState<BookCategory | "">("");
-  const [condition, setCondition] = useState<BookCondition | "">("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
+  const [debouncedQuery, setDebouncedQuery] = useState(() => searchParams.get("q") ?? "");
+  const [category, setCategory] = useState<BookCategory | "">(() => (searchParams.get("category") as BookCategory) ?? "");
+  const [condition, setCondition] = useState<BookCondition | "">(() => (searchParams.get("condition") as BookCondition) ?? "");
+  const [maxPrice, setMaxPrice] = useState(() => searchParams.get("maxPrice") ?? "");
+  const [showFilters, setShowFilters] = useState(() => !!(searchParams.get("category") || searchParams.get("condition") || searchParams.get("maxPrice")));
+
+  // Sync filter state → URL (no scroll reset)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedQuery) params.set("q", debouncedQuery);
+    if (category) params.set("category", category);
+    if (condition) params.set("condition", condition);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    const qs = params.toString();
+    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  }, [debouncedQuery, category, condition, maxPrice, pathname, router]);
 
   // Debounce search query
   useEffect(() => {
@@ -101,13 +116,6 @@ export default function BooksPage() {
       .finally(() => setLoadingMore(false));
   }, [page, debouncedQuery, category, condition, maxPrice]);
 
-  // Seed query from URL on mount
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get("q");
-    if (q) setQuery(q);
-  }, []);
-
   const hasFilters = !!(query || category || condition || maxPrice);
 
   const clearFilters = () => {
@@ -145,6 +153,7 @@ export default function BooksPage() {
         </div>
         <button
           onClick={handleSurpriseMe}
+          aria-label="Surprise me — open a random book"
           className="flex items-center gap-2 rounded border border-border bg-surface-raised px-4 py-2.5 text-[13px] font-medium text-ink-muted transition-colors hover:border-border-strong hover:text-ink"
         >
           <Shuffle size={14} />
@@ -164,11 +173,13 @@ export default function BooksPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search title or author…"
+            aria-label="Search books by title or author"
             className="w-full rounded border border-border bg-surface-raised py-2.5 pl-9 pr-9 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
           />
           {query && (
             <button
               onClick={() => setQuery("")}
+              aria-label="Clear search"
               className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted transition-colors hover:text-ink"
             >
               <X size={14} />
@@ -177,6 +188,8 @@ export default function BooksPage() {
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
+          aria-label="Toggle filters"
+          aria-expanded={showFilters}
           className={`flex items-center gap-2 rounded border px-4 py-2.5 text-sm font-medium transition-colors ${
             showFilters
               ? "border-brand bg-brand-light text-brand"
