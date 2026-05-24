@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, SlidersHorizontal, X, Shuffle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getApprovedBooks } from "@/lib/api";
 import { Book, BookCategory, BookCondition } from "@/lib/types";
 import BookCard from "@/components/books/BookCard";
+
+const LIMIT = 20;
 
 const CATEGORIES: { value: BookCategory | ""; label: string }[] = [
   { value: "", label: "All categories" },
@@ -39,39 +41,74 @@ function BookSkeleton() {
 export default function BooksPage() {
   const router = useRouter();
   const [books, setBooks] = useState<Book[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [category, setCategory] = useState<BookCategory | "">("");
   const [condition, setCondition] = useState<BookCondition | "">("");
   const [maxPrice, setMaxPrice] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Fetch page 1 whenever filters change
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setPage(1);
+    getApprovedBooks({
+      search: debouncedQuery || undefined,
+      category: category || undefined,
+      condition: condition || undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      page: 1,
+      limit: LIMIT,
+    })
+      .then((r) => {
+        if (!cancelled) {
+          setBooks(r.books);
+          setTotal(r.total);
+        }
+      })
+      .catch(() => { if (!cancelled) { setBooks([]); setTotal(0); } })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [debouncedQuery, category, condition, maxPrice]);
+
+  const loadMore = useCallback(() => {
+    const nextPage = page + 1;
+    setLoadingMore(true);
+    getApprovedBooks({
+      search: debouncedQuery || undefined,
+      category: category || undefined,
+      condition: condition || undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      page: nextPage,
+      limit: LIMIT,
+    })
+      .then((r) => {
+        setBooks((prev) => [...prev, ...r.books]);
+        setPage(nextPage);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingMore(false));
+  }, [page, debouncedQuery, category, condition, maxPrice]);
+
+  // Seed query from URL on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const q = params.get("q");
     if (q) setQuery(q);
-
-    getApprovedBooks()
-      .then((r) => setBooks(r.books))
-      .catch(() => setBooks([]))
-      .finally(() => setLoading(false));
   }, []);
 
   const hasFilters = !!(query || category || condition || maxPrice);
-
-  const filtered = books.filter((book) => {
-    if (
-      query &&
-      !book.name.toLowerCase().includes(query.toLowerCase()) &&
-      !book.author.toLowerCase().includes(query.toLowerCase()) &&
-      !book.category.toLowerCase().includes(query.toLowerCase())
-    )
-      return false;
-    if (category && book.category !== category) return false;
-    if (condition && book.condition !== condition) return false;
-    if (maxPrice && book.price > Number(maxPrice)) return false;
-    return true;
-  });
 
   const clearFilters = () => {
     setQuery("");
@@ -90,6 +127,7 @@ export default function BooksPage() {
   };
 
   const activeFilterCount = [category, condition, maxPrice].filter(Boolean).length;
+  const hasMore = books.length < total;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -102,7 +140,7 @@ export default function BooksPage() {
           <p className="mt-1 text-sm text-ink-muted">
             {loading
               ? "Loading…"
-              : `${filtered.length} book${filtered.length !== 1 ? "s" : ""} available`}
+              : `${total} book${total !== 1 ? "s" : ""} available`}
           </p>
         </div>
         <button
@@ -125,7 +163,7 @@ export default function BooksPage() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search title, author, or category…"
+            placeholder="Search title or author…"
             className="w-full rounded border border-border bg-surface-raised py-2.5 pl-9 pr-9 text-sm text-ink placeholder:text-ink-muted outline-none transition-all focus:border-brand/50 focus:ring-2 focus:ring-brand/10"
           />
           {query && (
@@ -214,12 +252,32 @@ export default function BooksPage() {
             <BookSkeleton key={i} />
           ))}
         </div>
-      ) : filtered.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {filtered.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
+      ) : books.length > 0 ? (
+        <>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {books.map((book) => (
+              <BookCard key={book.id} book={book} />
+            ))}
+          </div>
+          {hasMore && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={loadMore}
+                disabled={loadingMore}
+                className="rounded border border-border bg-surface-raised px-6 py-2.5 text-sm font-medium text-ink-muted transition-colors hover:border-border-strong hover:text-ink disabled:opacity-50"
+              >
+                {loadingMore ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Loading…
+                  </span>
+                ) : (
+                  `Load more (${total - books.length} remaining)`
+                )}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="rounded-lg border border-border bg-surface-raised px-6 py-16 text-center">
           <Search size={32} strokeWidth={1} className="mx-auto text-ink-subtle" />

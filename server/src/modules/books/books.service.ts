@@ -1,5 +1,5 @@
 import prisma from '../../services/lib/prisma';
-import { Condition, Category } from '../../../generated/prisma';
+import { Prisma, Condition, Category } from '../../../generated/prisma';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../shared/errors';
 import { uploadBuffers } from '../../shared/upload';
 
@@ -16,8 +16,8 @@ export const createBook = async (
   },
   files: Express.Multer.File[],
 ) => {
-  if (files.length < 3) {
-    throw new BadRequestError('At least 3 images are required');
+  if (files.length < 2) {
+    throw new BadRequestError('At least 2 images are required');
   }
 
   const imageUrls = await uploadBuffers(files, 'lhasa/books');
@@ -32,29 +32,58 @@ export const createBook = async (
   });
 };
 
-export const getApprovedBooks = async () => {
-  return prisma.book.findMany({
-    where: { adminCheck: 'APPROVED' },
+const BOOK_SELECT = {
+  id: true,
+  name: true,
+  author: true,
+  price: true,
+  condition: true,
+  category: true,
+  images: true,
+  status: true,
+  createdAt: true,
+  Seller: {
     select: {
       id: true,
       name: true,
-      author: true,
-      price: true,
-      condition: true,
-      category: true,
-      images: true,
-      status: true,
-      createdAt: true,
-      Seller: {
-        select: {
-          id: true,
-          name: true,
-          district: true,
-        },
-      },
+      district: true,
     },
-    orderBy: { createdAt: 'desc' },
-  });
+  },
+} as const;
+
+export const getApprovedBooks = async (params: {
+  search?: string;
+  category?: Category;
+  condition?: Condition;
+  maxPrice?: number;
+  page?: number;
+  limit?: number;
+} = {}) => {
+  const { search, category, condition, maxPrice, page = 1, limit = 20 } = params;
+
+  const where: Prisma.BookWhereInput = { adminCheck: 'APPROVED' };
+  if (category) where.category = category;
+  if (condition) where.condition = condition;
+  if (maxPrice) where.price = { lte: maxPrice };
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { author: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  const [books, total] = await Promise.all([
+    prisma.book.findMany({
+      where,
+      select: BOOK_SELECT,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.book.count({ where }),
+  ]);
+
+  return { books, total };
 };
 
 export const getBookById = async (id: number) => {

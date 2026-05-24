@@ -12,10 +12,18 @@ export const createBook = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-export const getApprovedBooks = async (_req: Request, res: Response, next: NextFunction) => {
+export const getApprovedBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const books = await BookService.getApprovedBooks();
-        res.status(200).json({ success: true, books });
+        const { search, category, condition, maxPrice, page, limit } = req.query;
+        const result = await BookService.getApprovedBooks({
+            search: search as string | undefined,
+            category: category as any,
+            condition: condition as any,
+            maxPrice: maxPrice ? Number(maxPrice) : undefined,
+            page: page ? Number(page) : undefined,
+            limit: limit ? Number(limit) : undefined,
+        });
+        res.status(200).json({ success: true, ...result });
     } catch (err) {
         next(err);
     }

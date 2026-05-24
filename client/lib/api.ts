@@ -124,8 +124,25 @@ export async function updateProfile(data: {
 
 // ─── Books ─────────────────────────────────────────────────────────────────
 
-export async function getApprovedBooks() {
-  return request<{ success: boolean; books: Book[] }>("/api/books");
+export async function getApprovedBooks(params?: {
+  search?: string;
+  category?: string;
+  condition?: string;
+  maxPrice?: number;
+  page?: number;
+  limit?: number;
+}) {
+  const qs = new URLSearchParams();
+  if (params?.search)   qs.set("search",   params.search);
+  if (params?.category) qs.set("category", params.category);
+  if (params?.condition) qs.set("condition", params.condition);
+  if (params?.maxPrice)  qs.set("maxPrice", String(params.maxPrice));
+  if (params?.page)      qs.set("page",     String(params.page));
+  if (params?.limit)     qs.set("limit",    String(params.limit));
+  const query = qs.toString();
+  return request<{ success: boolean; books: Book[]; total: number }>(
+    `/api/books${query ? `?${query}` : ""}`
+  );
 }
 
 export async function getBookStats() {

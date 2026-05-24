@@ -54,8 +54,8 @@ export default function SellPage() {
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
     const arr = Array.from(files).slice(0, 5);
-    if (arr.length < 3) {
-      toast.error("Please select at least 3 images");
+    if (arr.length < 2) {
+      toast.error("Please select at least 2 images");
       return;
     }
     setImages(arr);
@@ -78,8 +78,8 @@ export default function SellPage() {
       toast.error("Please fill in all required fields");
       return;
     }
-    if (images.length < 3) {
-      toast.error("At least 3 photos are required");
+    if (images.length < 2) {
+      toast.error("At least 2 photos are required");
       return;
     }
     if (Number(form.price) <= 0) {
@@ -171,7 +171,7 @@ export default function SellPage() {
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">
             Photos{" "}
-            <span className="font-normal text-ink-muted">(3–5 required)</span>
+            <span className="font-normal text-ink-muted">(2–5 required)</span>
           </label>
 
           {previews.length === 0 ? (
@@ -184,7 +184,7 @@ export default function SellPage() {
                 <ImagePlus size={32} strokeWidth={1} />
                 <div className="text-center">
                   <p className="text-sm font-medium">Tap to add photos</p>
-                  <p className="mt-0.5 text-xs">Select 3–5 images of your book</p>
+                  <p className="mt-0.5 text-xs">Select 2–5 images of your book</p>
                 </div>
               </button>
               <p className="mt-2 text-[11px] leading-relaxed text-ink-subtle">
@@ -227,9 +227,9 @@ export default function SellPage() {
               </div>
               <p className="text-xs text-ink-muted">
                 {images.length}/5 photos added
-                {images.length < 3 && (
+                {images.length < 2 && (
                   <span className="ml-1 text-red-500">
-                    (need {3 - images.length} more)
+                    (need {2 - images.length} more)
                   </span>
                 )}
               </p>
@@ -365,7 +365,7 @@ export default function SellPage() {
 
         <button
           type="submit"
-          disabled={submitting || images.length < 3}
+          disabled={submitting || images.length < 2}
           className="w-full rounded bg-accent py-3.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
         >
           {submitting ? (
