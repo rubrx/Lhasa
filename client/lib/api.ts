@@ -17,10 +17,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15_000);
 
+  // Only send credentials when the request carries a JWT — auth is header-based,
+  // not cookie-based, so unauthenticated public requests don't need credentials.
+  // This avoids forced CORS preflights on simple public GET endpoints.
+  const headers = options.headers as Record<string, string> | undefined;
+  const credentials = headers?.['Authorization'] ? 'include' : 'omit';
+
   try {
     const response = await fetch(`${BASE_URL}${path}`, {
       ...options,
-      credentials: "include",
+      credentials,
       signal: options.signal ?? controller.signal,
     });
     const data = await response.json();

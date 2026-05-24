@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Search, SlidersHorizontal, X, Shuffle } from "lucide-react";
+import { Suspense, useState, useEffect, useCallback } from "react";
+import { RefreshCw, Search, SlidersHorizontal, X, Shuffle } from "lucide-react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { getApprovedBooks } from "@/lib/api";
 import { Book, BookCategory, BookCondition } from "@/lib/types";
@@ -39,6 +39,20 @@ function BookSkeleton() {
 }
 
 export default function BooksPage() {
+  return (
+    <Suspense fallback={
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => <BookSkeleton key={i} />)}
+        </div>
+      </div>
+    }>
+      <BooksPageContent />
+    </Suspense>
+  );
+}
+
+function BooksPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -49,6 +63,8 @@ export default function BooksPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [debouncedQuery, setDebouncedQuery] = useState(() => searchParams.get("q") ?? "");
   const [category, setCategory] = useState<BookCategory | "">(() => (searchParams.get("category") as BookCategory) ?? "");
@@ -77,6 +93,7 @@ export default function BooksPage() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setFetchError(false);
     setPage(1);
     getApprovedBooks({
       search: debouncedQuery || undefined,
@@ -92,10 +109,10 @@ export default function BooksPage() {
           setTotal(r.total);
         }
       })
-      .catch(() => { if (!cancelled) { setBooks([]); setTotal(0); } })
+      .catch(() => { if (!cancelled) { setFetchError(true); setBooks([]); setTotal(0); } })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [debouncedQuery, category, condition, maxPrice]);
+  }, [debouncedQuery, category, condition, maxPrice, retryCount]);
 
   const loadMore = useCallback(() => {
     const nextPage = page + 1;
@@ -264,6 +281,20 @@ export default function BooksPage() {
           {Array.from({ length: 8 }).map((_, i) => (
             <BookSkeleton key={i} />
           ))}
+        </div>
+      ) : fetchError ? (
+        <div className="rounded-lg border border-border bg-surface-raised px-6 py-16 text-center">
+          <p className="font-medium text-ink">Couldn&apos;t load books</p>
+          <p className="mt-1 text-sm text-ink-muted">
+            There was a problem reaching the server. Check your connection or try again.
+          </p>
+          <button
+            onClick={() => setRetryCount((c) => c + 1)}
+            className="mt-4 inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-accent-hover"
+          >
+            <RefreshCw size={13} />
+            Retry
+          </button>
         </div>
       ) : books.length > 0 ? (
         <>

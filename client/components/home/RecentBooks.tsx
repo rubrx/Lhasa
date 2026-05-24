@@ -1,33 +1,26 @@
-'use client';
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Repeat2 } from "lucide-react";
-import { getApprovedBooks } from "@/lib/api";
 import { Book } from "@/lib/types";
 import BookCard from "@/components/books/BookCard";
-import BookCardSkeleton from "@/components/books/BookCardSkeleton";
 
-function SkeletonGrid() {
-  return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <BookCardSkeleton key={i} />
-      ))}
-    </div>
-  );
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
+async function fetchBooks(): Promise<Book[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/books?page=1&limit=8`, {
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.books ?? []).slice(0, 8) as Book[];
+  } catch {
+    return [];
+  }
 }
 
-export default function RecentBooks() {
-  const [books, setBooks] = useState<Book[] | null>(null);
-
-  useEffect(() => {
-    getApprovedBooks({ page: 1, limit: 8 })
-      .then((result) => setBooks(result.books.slice(0, 8)))
-      .catch(() => setBooks([]));
-  }, []);
-
-  if (books === null) return <SkeletonGrid />;
+export default async function RecentBooks() {
+  const books = await fetchBooks();
 
   if (books.length === 0) {
     return (
