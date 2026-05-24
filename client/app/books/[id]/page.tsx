@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BookDetailClient from "./BookDetailClient";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lhasabraii.shop";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lhasabooks.com";
 
 interface BookMeta {
   name: string;

@@ -31,7 +31,7 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lhasabraii.shop";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lhasabooks.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -46,6 +46,8 @@ export const metadata: Metadata = {
     "lhasa",
     "Lhasabraii",
     "lhasabraii",
+    "Lhasabooks",
+    "lhasabooks",
     "lhasa books",
     "Lhasa books",
     "buy books Lohit",
