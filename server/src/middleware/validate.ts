@@ -15,7 +15,18 @@ export function validate(schema: ZodSchema, target: Target = 'body') {
     }
 
     // Replace with coerced/parsed data (handles defaults, trims, etc.)
-    req[target] = result.data;
+    // Express 5 makes req.query a read-only getter on the prototype, so direct
+    // assignment throws. Shadow it with an own property instead.
+    if (target === 'query') {
+      Object.defineProperty(req, 'query', {
+        value: result.data,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      });
+    } else {
+      req[target] = result.data;
+    }
     next();
   };
 }
