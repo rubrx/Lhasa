@@ -18,6 +18,20 @@ export function errorHandler(
     return;
   }
 
+  // Multer file upload errors
+  if ((err as any)?.code === 'LIMIT_FILE_SIZE') {
+    res.status(400).json({ success: false, code: 'FILE_TOO_LARGE', message: 'Each image must be under 5 MB.' });
+    return;
+  }
+  if ((err as any)?.code === 'LIMIT_FILE_COUNT') {
+    res.status(400).json({ success: false, code: 'TOO_MANY_FILES', message: 'Maximum 5 images allowed.' });
+    return;
+  }
+  if ((err as any)?.message === 'Only images allowed') {
+    res.status(400).json({ success: false, code: 'INVALID_FILE_TYPE', message: 'Only image files (JPG, PNG, WEBP) are allowed.' });
+    return;
+  }
+
   // Prisma unique constraint violation
   if ((err as any)?.code === 'P2002') {
     const field = (err as any)?.meta?.target?.[0] ?? 'field';

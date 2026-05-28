@@ -8,8 +8,8 @@ export const createBookSchema = z.object({
   name: z.string().min(1, 'Book name is required').max(200).trim(),
   author: z.string().min(1, 'Author is required').max(200).trim(),
   price: z.coerce.number().positive('Price must be greater than 0').max(100000),
-  description: z.string().max(2000).trim().optional(),
-  sellerNote: z.string().max(500).trim().optional(),
+  description: z.string().max(2000).trim().transform(v => v || undefined).optional(),
+  sellerNote: z.string().max(500).trim().transform(v => v || undefined).optional(),
   condition: z.enum(CONDITIONS, { error: `Condition must be one of: ${CONDITIONS.join(', ')}` }),
   category: z.enum(CATEGORIES, { error: `Category must be one of: ${CATEGORIES.join(', ')}` }),
 });

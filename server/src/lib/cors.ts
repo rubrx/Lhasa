@@ -24,7 +24,8 @@ export const corsOptions: CorsOptions = {
 
     if (isAllowedOrigin(requestOrigin)) return callback(null, true);
 
-    callback(new Error(`CORS: origin not allowed — ${requestOrigin}`));
+    // Returning false blocks the request without logging an unhandled error
+    callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

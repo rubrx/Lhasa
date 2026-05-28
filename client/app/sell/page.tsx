@@ -22,7 +22,7 @@ const CATEGORIES = [
 ];
 
 export default function SellPage() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -41,10 +41,11 @@ export default function SellPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login?redirect=/sell");
-    }
-  }, [isAuthenticated, isLoading, router]);
+    if (isLoading) return;
+    if (!isAuthenticated) { router.push("/login?redirect=/sell"); return; }
+    // Google OAuth users must complete profile (add phone) before listing
+    if (!user?.phone) router.push("/complete-profile");
+  }, [isAuthenticated, isLoading, user, router]);
 
   const update =
     (key: keyof typeof form) =>
