@@ -185,7 +185,7 @@ export async function createBook(formData: FormData) {
     // Do NOT set Content-Type — browser sets multipart/form-data with boundary automatically
     headers: authHeaders(),
     body: formData,
-    timeoutMs: 60_000, // images must upload to Cloudinary server-side before responding
+    timeoutMs: 120_000, // images upload to Cloudinary server-side; allow 2 min for slow connections
   });
 }
 
