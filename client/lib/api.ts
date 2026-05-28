@@ -13,21 +13,22 @@ function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, options: RequestInit & { timeoutMs?: number } = {}): Promise<T> {
+  const { timeoutMs = 15_000, ...fetchOptions } = options;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 15_000);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   // Only send credentials when the request carries a JWT — auth is header-based,
   // not cookie-based, so unauthenticated public requests don't need credentials.
   // This avoids forced CORS preflights on simple public GET endpoints.
-  const headers = options.headers as Record<string, string> | undefined;
+  const headers = fetchOptions.headers as Record<string, string> | undefined;
   const credentials = headers?.['Authorization'] ? 'include' : 'omit';
 
   try {
     const response = await fetch(`${BASE_URL}${path}`, {
-      ...options,
+      ...fetchOptions,
       credentials,
-      signal: options.signal ?? controller.signal,
+      signal: fetchOptions.signal ?? controller.signal,
     });
     const data = await response.json();
     if (!response.ok) {
@@ -184,6 +185,7 @@ export async function createBook(formData: FormData) {
     // Do NOT set Content-Type — browser sets multipart/form-data with boundary automatically
     headers: authHeaders(),
     body: formData,
+    timeoutMs: 60_000, // images must upload to Cloudinary server-side before responding
   });
 }
 
