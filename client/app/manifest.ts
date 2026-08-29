@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fafaf9",
-    theme_color: "#2d6a4f",
+    background_color: "#faf8f3",
+    theme_color: "#1b2e4b",
     icons: [
       {
         src: "/favicons/android-chrome-192x192.png",
