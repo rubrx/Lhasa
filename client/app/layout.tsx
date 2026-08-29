@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Lora, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -33,42 +33,37 @@ const dmSans = DM_Sans({
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lhasabooks.com";
 
+export const viewport: Viewport = {
+  themeColor: "#1b2e4b",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    template: "%s | Lhasa",
-    default: "Lhasa: Buy & Sell Used Books in Lohit, Arunachal Pradesh",
+    template: "%s | Lhasa Books",
+    default: "Lhasa Books — Buy & Sell Used Books in Lohit, Arunachal Pradesh",
   },
   description:
-    "Lhasa is a free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh. No fees, no commissions, connect directly with buyers and sellers near you.",
+    "Free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh. Zero fees, zero commissions. Connect directly with sellers on WhatsApp.",
   keywords: [
-    "Lhasa",
-    "lhasa",
-    "Lhasabraii",
-    "lhasabraii",
-    "Lhasabooks",
-    "lhasabooks",
-    "lhasa books",
+    "used books Lohit",
+    "second hand books Arunachal Pradesh",
+    "buy books Tezu",
+    "sell books Arunachal",
+    "book marketplace Lohit district",
+    "cheap textbooks Arunachal Pradesh",
     "Lhasa books",
-    "buy books Lohit",
-    "sell books Lohit",
-    "used books Arunachal Pradesh",
-    "second hand books Arunachal",
-    "book marketplace Lohit",
-    "cheap books Tezu",
-    "books near me Arunachal",
-    "online book shopping Arunachal Pradesh",
-    "buy sell books online India",
-    "local book market Lohit district",
-    "affordable books Arunachal",
-    "second hand textbooks Arunachal Pradesh",
   ],
+  applicationName: "Lhasa Books",
   verification: {
     google: "16o_bWAdqhD5QlzGzgKRl2l1x7zyyP37_lEUb_2d38I",
   },
-  authors: [{ name: "Lhasa" }],
-  creator: "Lhasa",
-  publisher: "Lhasa",
+  authors: [{ name: "Lhasa Books" }],
+  creator: "Lhasa Books",
+  publisher: "Lhasa Books",
   robots: {
     index: true,
     follow: true,
@@ -81,25 +76,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    siteName: "Lhasa",
-    title: "Lhasa - Buy & Sell Used Books in Lohit, Arunachal Pradesh",
+    siteName: "Lhasa Books",
+    title: "Lhasa Books — Buy & Sell Used Books in Lohit, Arunachal Pradesh",
     description:
-      "Free local marketplace for used books in Lohit district. No fees, no commissions, connect with buyers and sellers near you.",
-    images: [
-      {
-        url: "/favicons/android-chrome-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "Lhasa Books — Where books find their next reader.",
-      },
-    ],
+      "Free local marketplace for used books in Lohit district. Zero fees, zero commissions. Direct WhatsApp contact with sellers.",
   },
   twitter: {
-    card: "summary",
-    title: "Lhasa — Buy & Sell Used Books in Lohit, Arunachal Pradesh",
+    card: "summary_large_image",
+    title: "Lhasa Books — Buy & Sell Used Books in Lohit, Arunachal Pradesh",
     description:
-      "Free local marketplace for used books in Lohit district. No fees, no commissions.",
-    images: ["/favicons/android-chrome-512x512.png"],
+      "Free local marketplace for used books in Lohit district. Zero fees, zero commissions.",
   },
   icons: {
     icon: [
@@ -121,20 +107,28 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
-      name: "Lhasa",
-      description: "Free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh.",
+      name: "Lhasa Books",
+      description:
+        "Free local marketplace to buy and sell used books in Lohit district, Arunachal Pradesh.",
+      inLanguage: "en-IN",
       potentialAction: {
         "@type": "SearchAction",
-        target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/books?q={search_term_string}` },
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${SITE_URL}/books?q={search_term_string}`,
+        },
         "query-input": "required name=search_term_string",
       },
     },
     {
       "@type": "LocalBusiness",
       "@id": `${SITE_URL}/#organization`,
-      name: "Lhasa",
+      name: "Lhasa Books",
       url: SITE_URL,
-      description: "Buy and sell used books locally in Lohit district, Arunachal Pradesh. Zero fees, direct WhatsApp contact.",
+      logo: `${SITE_URL}/logo.svg`,
+      image: `${SITE_URL}/opengraph-image`,
+      description:
+        "Buy and sell used books locally in Lohit district, Arunachal Pradesh. Zero fees, direct WhatsApp contact.",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Lohit district",
